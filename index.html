@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Batalha do Código</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background-color: #0a0a1a;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #00e5ff;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    #arena {
+      width: 800px;
+      height: 500px;
+      background-color: #111133;
+      border: 3px solid #00e5ff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tanque {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    #placar {
+      margin-top: 15px;
+      font-size: 1.2rem;
+      color: #ffaa00;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>⚔️ Batalha do Código ⚔️</h1>
+
+  <div id="arena">
+    <div class="tanque" id="tanque1" style="left:50px; top:220px;">🟦</div>
+    <div class="tanque" id="tanque2" style="left:710px; top:220px;">🟥</div>
+  </div>
+
+  <div id="placar">Aguardando jogadores...</div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('connect', () => {
+      console.log('Conectado ao servidor!');
+      document.getElementById('placar').textContent = 'Conectado! Aguardando jogadores...';
+    });
+
+    const tanques = {
+      tanque1: document.getElementById('tanque1'),
+      tanque2: document.getElementById('tanque2')
+    };
+
+    const posicoes = {
+      tanque1: { x: 50, y: 220 },
+      tanque2: { x: 710, y: 220 }
+    };
+
+    const velocidade = 10;
+
+    socket.on('comando', (data) => {
+      console.log('Comando recebido:', data);
+      const tanque = tanques[data.tanque];
+      const pos = posicoes[data.tanque];
+
+      if (!tanque) return;
+
+      if (data.direcao === 'cima')     pos.y -= velocidade;
+      if (data.direcao === 'baixo')    pos.y += velocidade;
+      if (data.direcao === 'esquerda') pos.x -= velocidade;
+      if (data.direcao === 'direita')  pos.x += velocidade;
+
+      pos.x = Math.max(0, Math.min(760, pos.x));
+      pos.y = Math.max(0, Math.min(460, pos.y));
+
+      tanque.style.left = pos.x + 'px';
+      tanque.style.top  = pos.y + 'px';
+    });
+  </script>
+
+</body>
+</html>
