@@ -16,18 +16,17 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      gap: 15px;
     }
 
     h1 {
       color: #00e5ff;
-      margin-bottom: 10px;
       font-size: 1.5rem;
     }
 
     #escolha {
       display: flex;
       gap: 20px;
-      margin-bottom: 30px;
     }
 
     .btn-tanque {
@@ -42,17 +41,22 @@
     #btn1 { background-color: #0055ff; color: white; }
     #btn2 { background-color: #ff2200; color: white; }
 
+    #tanque-escolhido {
+      font-size: 1.1rem;
+      color: #ffaa00;
+    }
+
     #controles {
       display: grid;
-      grid-template-columns: repeat(3, 80px);
-      grid-template-rows: repeat(3, 80px);
-      gap: 10px;
+      grid-template-columns: repeat(3, 75px);
+      grid-template-rows: repeat(3, 75px);
+      gap: 8px;
     }
 
     .btn-dir {
-      width: 80px;
-      height: 80px;
-      font-size: 2rem;
+      width: 75px;
+      height: 75px;
+      font-size: 1.8rem;
       border: none;
       border-radius: 15px;
       background-color: #1a1a3a;
@@ -68,10 +72,22 @@
 
     .vazio { visibility: hidden; }
 
-    #tanque-escolhido {
-      margin-bottom: 20px;
-      font-size: 1.1rem;
-      color: #ffaa00;
+    #btn-tiro {
+      width: 180px;
+      height: 60px;
+      font-size: 1.5rem;
+      border: none;
+      border-radius: 15px;
+      background-color: #ff6600;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      border: 2px solid #ffaa00;
+    }
+
+    #btn-tiro:active {
+      background-color: #ffaa00;
+      color: #0a0a1a;
     }
   </style>
 </head>
@@ -100,6 +116,8 @@
     <div class="vazio"></div>
   </div>
 
+  <button id="btn-tiro" onclick="atirar()">💥 ATIRAR</button>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
@@ -119,6 +137,17 @@
       socket.emit('comando', {
         tanque: tanqueEscolhido,
         direcao: direcao
+      });
+    }
+
+    function atirar() {
+      if (!tanqueEscolhido) {
+        alert('Escolha um tanque primeiro!');
+        return;
+      }
+      socket.emit('comando', {
+        tanque: tanqueEscolhido,
+        atirar: true
       });
     }
   </script>

@@ -5,7 +5,7 @@
   <title>Batalha do Código</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
     body {
       background-color: #0a0a1a;
       color: white;
@@ -20,8 +20,18 @@
     h1 {
       color: #00e5ff;
       font-size: 2rem;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
+
+    #placar {
+      display: flex;
+      gap: 60px;
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+    }
+
+    #vida1 { color: #4444ff; }
+    #vida2 { color: #ff2222; }
 
     #arena {
       width: 800px;
@@ -42,10 +52,19 @@
       font-size: 1.5rem;
     }
 
-    #placar {
+    .tiro {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    #mensagem {
       margin-top: 15px;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       color: #ffaa00;
+      font-weight: bold;
+      min-height: 30px;
     }
   </style>
 </head>
@@ -53,20 +72,24 @@
 
   <h1>⚔️ Batalha do Código ⚔️</h1>
 
+  <div id="placar">
+    <div id="vida1">🟦 Tanque 1: ❤️❤️❤️</div>
+    <div id="vida2">🟥 Tanque 2: ❤️❤️❤️</div>
+  </div>
+
   <div id="arena">
     <div class="tanque" id="tanque1" style="left:50px; top:220px;">🟦</div>
     <div class="tanque" id="tanque2" style="left:710px; top:220px;">🟥</div>
   </div>
 
-  <div id="placar">Aguardando jogadores...</div>
+  <div id="mensagem">Aguardando jogadores...</div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
 
     socket.on('connect', () => {
-      console.log('Conectado ao servidor!');
-      document.getElementById('placar').textContent = 'Conectado! Aguardando jogadores...';
+      document.getElementById('mensagem').textContent = 'Conectado! Escolha seu tanque!';
     });
 
     const tanques = {
@@ -75,30 +98,106 @@
     };
 
     const posicoes = {
-      tanque1: { x: 50, y: 220 },
-      tanque2: { x: 710, y: 220 }
+      tanque1: { x: 50, y: 220, dir: 'direita' },
+      tanque2: { x: 710, y: 220, dir: 'esquerda' }
     };
 
+    const vidas = { tanque1: 3, tanque2: 3 };
     const velocidade = 10;
+    let jogoAtivo = true;
+
+    function atualizarVidas() {
+      const coracoes1 = '❤️'.repeat(vidas.tanque1) || '💀';
+      const coracoes2 = '❤️'.repeat(vidas.tanque2) || '💀';
+      document.getElementById('vida1').textContent = '🟦 Tanque 1: ' + coracoes1;
+      document.getElementById('vida2').textContent = '🟥 Tanque 2: ' + coracoes2;
+    }
 
     socket.on('comando', (data) => {
-      console.log('Comando recebido:', data);
+      if (!jogoAtivo) return;
+
       const tanque = tanques[data.tanque];
       const pos = posicoes[data.tanque];
-
       if (!tanque) return;
 
-      if (data.direcao === 'cima')     pos.y -= velocidade;
-      if (data.direcao === 'baixo')    pos.y += velocidade;
-      if (data.direcao === 'esquerda') pos.x -= velocidade;
-      if (data.direcao === 'direita')  pos.x += velocidade;
+      if (data.direcao) {
+        pos.dir = data.direcao;
+        if (data.direcao === 'cima')     pos.y -= velocidade;
+        if (data.direcao === 'baixo')    pos.y += velocidade;
+        if (data.direcao === 'esquerda') pos.x -= velocidade;
+        if (data.direcao === 'direita')  pos.x += velocidade;
 
-      pos.x = Math.max(0, Math.min(760, pos.x));
-      pos.y = Math.max(0, Math.min(460, pos.y));
+        pos.x = Math.max(0, Math.min(760, pos.x));
+        pos.y = Math.max(0, Math.min(460, pos.y));
 
-      tanque.style.left = pos.x + 'px';
-      tanque.style.top  = pos.y + 'px';
+        tanque.style.left = pos.x + 'px';
+        tanque.style.top  = pos.y + 'px';
+      }
+
+      if (data.atirar) {
+        atirar(data.tanque);
+      }
     });
+
+    function atirar(nomeTanque) {
+      const pos = posicoes[nomeTanque];
+      const cor = nomeTanque === 'tanque1' ? '#4444ff' : '#ff2222';
+      const inimigo = nomeTanque === 'tanque1' ? 'tanque2' : 'tanque1';
+
+      const tiro = document.createElement('div');
+      tiro.classList.add('tiro');
+      tiro.style.backgroundColor = cor;
+
+      let tx = pos.x + 15;
+      let ty = pos.y + 15;
+      tiro.style.left = tx + 'px';
+      tiro.style.top  = ty + 'px';
+
+      document.getElementById('arena').appendChild(tiro);
+
+      let dx = 0, dy = 0;
+      if (pos.dir === 'direita')  dx = 8;
+      if (pos.dir === 'esquerda') dx = -8;
+      if (pos.dir === 'cima')     dy = -8;
+      if (pos.dir === 'baixo')    dy = 8;
+
+      const intervalo = setInterval(() => {
+        tx += dx;
+        ty += dy;
+        tiro.style.left = tx + 'px';
+        tiro.style.top  = ty + 'px';
+
+        // Verificar colisão com inimigo
+        const posInimigo = posicoes[inimigo];
+        if (
+          tx > posInimigo.x && tx < posInimigo.x + 40 &&
+          ty > posInimigo.y && ty < posInimigo.y + 40
+        ) {
+          clearInterval(intervalo);
+          tiro.remove();
+          vidas[inimigo]--;
+          atualizarVidas();
+
+          // Piscar tanque atingido
+          tanques[inimigo].style.opacity = '0.2';
+          setTimeout(() => { tanques[inimigo].style.opacity = '1'; }, 400);
+
+          if (vidas[inimigo] <= 0) {
+            jogoAtivo = false;
+            const vencedor = nomeTanque === 'tanque1' ? '🟦 Tanque 1' : '🟥 Tanque 2';
+            document.getElementById('mensagem').textContent = vencedor + ' VENCEU! 🏆';
+            tanques[inimigo].textContent = '💀';
+          }
+          return;
+        }
+
+        // Sair da arena
+        if (tx < 0 || tx > 800 || ty < 0 || ty > 500) {
+          clearInterval(intervalo);
+          tiro.remove();
+        }
+      }, 20);
+    }
   </script>
 
 </body>
