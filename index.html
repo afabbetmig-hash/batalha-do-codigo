@@ -15,41 +15,203 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ===== TELA LOBBY ===== */
+    #tela-lobby {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: #0a0a1a;
+      z-index: 10;
+    }
+
+    #tela-lobby h1 {
+      font-size: 3rem;
+      color: #00e5ff;
+      text-shadow: 0 0 20px #00e5ff;
+      text-align: center;
+    }
+
+    #tela-lobby p {
+      font-size: 1.1rem;
+      color: #aaaaaa;
+    }
+
+    .lobby-jogadores {
+      display: flex;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 180px;
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid #333;
+      background-color: #111133;
+      transition: all 0.3s;
+    }
+
+    .slot.conectado {
+      border-color: #00e5ff;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+    }
+
+    .slot-icone {
+      font-size: 3rem;
+    }
+
+    .slot-nome {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #aaaaaa;
+    }
+
+    .slot.conectado .slot-nome {
+      color: white;
+    }
+
+    .slot-status {
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .slot.conectado .slot-status {
+      color: #00e5ff;
+    }
+
+    #btn-iniciar {
+      padding: 18px 50px;
+      font-size: 1.4rem;
+      background-color: #555;
+      color: #999;
+      border: none;
+      border-radius: 15px;
+      cursor: not-allowed;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    #btn-iniciar.pronto {
+      background-color: #00e5ff;
+      color: #0a0a1a;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+    }
+
+    #btn-iniciar.pronto:hover {
+      transform: scale(1.05);
+    }
+
+    .vs-texto {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ffaa00;
+    }
+
+    .instrucao {
+      font-size: 0.95rem;
+      color: #666;
+      text-align: center;
+    }
+
+    /* ===== CONTAGEM ===== */
+    #contagem {
+      display: none;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: #0a0a1a;
+      z-index: 9;
+      align-items: center;
+      justify-content: center;
+      font-size: 10rem;
+      font-weight: bold;
+      color: #00e5ff;
+      text-shadow: 0 0 40px #00e5ff;
+    }
+
+    /* ===== JOGO ===== */
+    #jogo {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
     h1 {
       color: #00e5ff;
-      font-size: 2rem;
-      margin-bottom: 10px;
+      font-size: 1.8rem;
     }
 
     #placar {
       display: flex;
-      gap: 60px;
-      margin-bottom: 10px;
-      font-size: 1.3rem;
+      gap: 80px;
     }
 
-    #vida1 { color: #4444ff; }
-    #vida2 { color: #ff2222; }
+    .info-tanque {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nome-tanque {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    #nome1 { color: #4488ff; }
+    #nome2 { color: #ff4444; }
+
+    .barra-vida-container {
+      width: 180px;
+      height: 18px;
+      background-color: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid #555;
+    }
+
+    .barra-vida {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.3s;
+    }
+
+    #barra1 { background-color: #4488ff; width: 100%; }
+    #barra2 { background-color: #ff4444; width: 100%; }
 
     #arena {
       width: 800px;
       height: 500px;
-      background-color: #111133;
+      background: linear-gradient(135deg, #111133 0%, #0a0a22 100%);
       border: 3px solid #00e5ff;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
     }
 
     .tanque {
-      width: 40px;
-      height: 40px;
+      width: 60px;
+      height: 60px;
       position: absolute;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 2rem;
     }
 
     .tiro {
@@ -57,10 +219,10 @@
       height: 8px;
       border-radius: 50%;
       position: absolute;
+      z-index: 5;
     }
 
     #mensagem {
-      margin-top: 15px;
       font-size: 1.5rem;
       color: #ffaa00;
       font-weight: bold;
@@ -70,27 +232,67 @@
 </head>
 <body>
 
-  <h1>⚔️ Batalha do Código ⚔️</h1>
+  <!-- LOBBY -->
+  <div id="tela-lobby">
+    <h1>⚔️ Batalha do Código ⚔️</h1>
+    <p>Grupo ACDC — escaneie o QR Code e entre no jogo!</p>
 
-  <div id="placar">
-    <div id="vida1">🟦 Tanque 1: ❤️❤️❤️</div>
-    <div id="vida2">🟥 Tanque 2: ❤️❤️❤️</div>
+    <div class="lobby-jogadores">
+      <div class="slot" id="slot1">
+        <div class="slot-icone">🟦</div>
+        <div class="slot-nome" id="nome-slot1">Aguardando...</div>
+        <div class="slot-status" id="status-slot1">Vaga aberta</div>
+      </div>
+
+      <div class="vs-texto">VS</div>
+
+      <div class="slot" id="slot2">
+        <div class="slot-icone">🟥</div>
+        <div class="slot-nome" id="nome-slot2">Aguardando...</div>
+        <div class="slot-status" id="status-slot2">Vaga aberta</div>
+      </div>
+    </div>
+
+    <button id="btn-iniciar" onclick="iniciarBatalha()">⚔️ INICIAR BATALHA</button>
+    <p class="instrucao">O botão ativa quando os 2 jogadores estiverem conectados</p>
   </div>
 
-  <div id="arena">
-    <div class="tanque" id="tanque1" style="left:50px; top:220px;">🟦</div>
-    <div class="tanque" id="tanque2" style="left:710px; top:220px;">🟥</div>
-  </div>
+  <!-- CONTAGEM -->
+  <div id="contagem">3</div>
 
-  <div id="mensagem">Aguardando jogadores...</div>
+  <!-- JOGO -->
+  <div id="jogo">
+    <h1>⚔️ Batalha do Código ⚔️</h1>
+
+    <div id="placar">
+      <div class="info-tanque">
+        <span class="nome-tanque" id="nome1">🟦 Tanque Azul</span>
+        <div class="barra-vida-container">
+          <div class="barra-vida" id="barra1"></div>
+        </div>
+      </div>
+      <div class="info-tanque">
+        <span class="nome-tanque" id="nome2">🟥 Tanque Vermelho</span>
+        <div class="barra-vida-container">
+          <div class="barra-vida" id="barra2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="arena">
+      <div class="tanque" id="tanque1" style="left:50px; top:220px;">🟦</div>
+      <div class="tanque" id="tanque2" style="left:710px; top:220px;">🟥</div>
+    </div>
+
+    <div id="mensagem"></div>
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
+    let jogoAtivo = false;
 
-    socket.on('connect', () => {
-      document.getElementById('mensagem').textContent = 'Conectado! Escolha seu tanque!';
-    });
+    const jogadores = { tanque1: null, tanque2: null };
 
     const tanques = {
       tanque1: document.getElementById('tanque1'),
@@ -103,14 +305,79 @@
     };
 
     const vidas = { tanque1: 3, tanque2: 3 };
+    const cores = { tanque1: '#4488ff', tanque2: '#ff4444' };
     const velocidade = 10;
-    let jogoAtivo = true;
+
+    // Jogador entrou no lobby
+    socket.on('lobby-atualizado', (data) => {
+      jogadores.tanque1 = data.tanque1;
+      jogadores.tanque2 = data.tanque2;
+
+      // Atualiza slot 1
+      if (data.tanque1) {
+        document.getElementById('nome-slot1').textContent = data.tanque1;
+        document.getElementById('status-slot1').textContent = '✅ Conectado!';
+        document.getElementById('slot1').classList.add('conectado');
+      } else {
+        document.getElementById('nome-slot1').textContent = 'Aguardando...';
+        document.getElementById('status-slot1').textContent = 'Vaga aberta';
+        document.getElementById('slot1').classList.remove('conectado');
+      }
+
+      // Atualiza slot 2
+      if (data.tanque2) {
+        document.getElementById('nome-slot2').textContent = data.tanque2;
+        document.getElementById('status-slot2').textContent = '✅ Conectado!';
+        document.getElementById('slot2').classList.add('conectado');
+      } else {
+        document.getElementById('nome-slot2').textContent = 'Aguardando...';
+        document.getElementById('status-slot2').textContent = 'Vaga aberta';
+        document.getElementById('slot2').classList.remove('conectado');
+      }
+
+      // Ativa botão se os 2 estiverem prontos
+      const btn = document.getElementById('btn-iniciar');
+      if (data.tanque1 && data.tanque2) {
+        btn.classList.add('pronto');
+      } else {
+        btn.classList.remove('pronto');
+      }
+    });
+
+    function iniciarBatalha() {
+      if (!jogadores.tanque1 || !jogadores.tanque2) return;
+
+      // Atualiza nomes no placar
+      document.getElementById('nome1').textContent = '🟦 ' + jogadores.tanque1;
+      document.getElementById('nome2').textContent = '🟥 ' + jogadores.tanque2;
+
+      socket.emit('iniciar-jogo');
+
+      document.getElementById('tela-lobby').style.display = 'none';
+      const contagem = document.getElementById('contagem');
+      contagem.style.display = 'flex';
+
+      let num = 3;
+      contagem.textContent = num;
+
+      const intervalo = setInterval(() => {
+        num--;
+        if (num === 0) {
+          contagem.textContent = 'VAI! 🚀';
+        } else if (num < 0) {
+          clearInterval(intervalo);
+          contagem.style.display = 'none';
+          document.getElementById('jogo').style.display = 'flex';
+          jogoAtivo = true;
+        } else {
+          contagem.textContent = num;
+        }
+      }, 1000);
+    }
 
     function atualizarVidas() {
-      const coracoes1 = '❤️'.repeat(vidas.tanque1) || '💀';
-      const coracoes2 = '❤️'.repeat(vidas.tanque2) || '💀';
-      document.getElementById('vida1').textContent = '🟦 Tanque 1: ' + coracoes1;
-      document.getElementById('vida2').textContent = '🟥 Tanque 2: ' + coracoes2;
+      document.getElementById('barra1').style.width = (vidas.tanque1 / 3 * 100) + '%';
+      document.getElementById('barra2').style.width = (vidas.tanque2 / 3 * 100) + '%';
     }
 
     socket.on('comando', (data) => {
@@ -127,39 +394,38 @@
         if (data.direcao === 'esquerda') pos.x -= velocidade;
         if (data.direcao === 'direita')  pos.x += velocidade;
 
-        pos.x = Math.max(0, Math.min(760, pos.x));
-        pos.y = Math.max(0, Math.min(460, pos.y));
+        pos.x = Math.max(0, Math.min(740, pos.x));
+        pos.y = Math.max(0, Math.min(440, pos.y));
 
         tanque.style.left = pos.x + 'px';
         tanque.style.top  = pos.y + 'px';
       }
 
-      if (data.atirar) {
-        atirar(data.tanque);
-      }
+      if (data.atirar) atirar(data.tanque);
     });
 
     function atirar(nomeTanque) {
       const pos = posicoes[nomeTanque];
-      const cor = nomeTanque === 'tanque1' ? '#4444ff' : '#ff2222';
+      const cor = cores[nomeTanque];
       const inimigo = nomeTanque === 'tanque1' ? 'tanque2' : 'tanque1';
 
       const tiro = document.createElement('div');
       tiro.classList.add('tiro');
       tiro.style.backgroundColor = cor;
+      tiro.style.boxShadow = `0 0 6px ${cor}`;
 
-      let tx = pos.x + 15;
-      let ty = pos.y + 15;
+      let tx = pos.x + 25;
+      let ty = pos.y + 25;
       tiro.style.left = tx + 'px';
       tiro.style.top  = ty + 'px';
 
       document.getElementById('arena').appendChild(tiro);
 
       let dx = 0, dy = 0;
-      if (pos.dir === 'direita')  dx = 8;
-      if (pos.dir === 'esquerda') dx = -8;
-      if (pos.dir === 'cima')     dy = -8;
-      if (pos.dir === 'baixo')    dy = 8;
+      if (pos.dir === 'direita')  dx = 10;
+      if (pos.dir === 'esquerda') dx = -10;
+      if (pos.dir === 'cima')     dy = -10;
+      if (pos.dir === 'baixo')    dy = 10;
 
       const intervalo = setInterval(() => {
         tx += dx;
@@ -167,31 +433,27 @@
         tiro.style.left = tx + 'px';
         tiro.style.top  = ty + 'px';
 
-        // Verificar colisão com inimigo
         const posInimigo = posicoes[inimigo];
         if (
-          tx > posInimigo.x && tx < posInimigo.x + 40 &&
-          ty > posInimigo.y && ty < posInimigo.y + 40
+          tx > posInimigo.x && tx < posInimigo.x + 60 &&
+          ty > posInimigo.y && ty < posInimigo.y + 60
         ) {
           clearInterval(intervalo);
           tiro.remove();
           vidas[inimigo]--;
           atualizarVidas();
 
-          // Piscar tanque atingido
           tanques[inimigo].style.opacity = '0.2';
           setTimeout(() => { tanques[inimigo].style.opacity = '1'; }, 400);
 
           if (vidas[inimigo] <= 0) {
             jogoAtivo = false;
-            const vencedor = nomeTanque === 'tanque1' ? '🟦 Tanque 1' : '🟥 Tanque 2';
-            document.getElementById('mensagem').textContent = vencedor + ' VENCEU! 🏆';
-            tanques[inimigo].textContent = '💀';
+            const vencedor = nomeTanque === 'tanque1' ? '🟦 ' + jogadores.tanque1 : '🟥 ' + jogadores.tanque2;
+            document.getElementById('mensagem').textContent = '🏆 ' + vencedor + ' VENCEU!';
           }
           return;
         }
 
-        // Sair da arena
         if (tx < 0 || tx > 800 || ty < 0 || ty > 500) {
           clearInterval(intervalo);
           tiro.remove();

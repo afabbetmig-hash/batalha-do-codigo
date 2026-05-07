@@ -24,6 +24,37 @@
       font-size: 1.5rem;
     }
 
+    /* ===== TELA DE ENTRADA ===== */
+    #tela-entrada {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    #tela-entrada input {
+      width: 80%;
+      padding: 15px;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      border: 2px solid #00e5ff;
+      background-color: #111133;
+      color: white;
+      text-align: center;
+      outline: none;
+    }
+
+    #tela-entrada input::placeholder {
+      color: #555;
+    }
+
+    .titulo-escolha {
+      font-size: 1rem;
+      color: #aaaaaa;
+    }
+
     #escolha {
       display: flex;
       gap: 20px;
@@ -36,14 +67,81 @@
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-tanque.selecionado {
+      opacity: 1;
+      transform: scale(1.1);
+      border: 3px solid white;
     }
 
     #btn1 { background-color: #0055ff; color: white; }
     #btn2 { background-color: #ff2200; color: white; }
 
+    #btn-entrar {
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      background-color: #00e5ff;
+      color: #0a0a1a;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 80%;
+    }
+
+    #btn-entrar:active {
+      background-color: #00bbdd;
+    }
+
+    /* ===== TELA DE ESPERA ===== */
+    #tela-espera {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #tela-espera .apelido {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ffaa00;
+    }
+
+    #tela-espera .status {
+      font-size: 1rem;
+      color: #aaaaaa;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #333;
+      border-top: 5px solid #00e5ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== TELA DE CONTROLES ===== */
+    #tela-controles {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
     #tanque-escolhido {
       font-size: 1.1rem;
       color: #ffaa00;
+      font-weight: bold;
     }
 
     #controles {
@@ -73,7 +171,7 @@
     .vazio { visibility: hidden; }
 
     #btn-tiro {
-      width: 180px;
+      width: 240px;
       height: 60px;
       font-size: 1.5rem;
       border: none;
@@ -93,47 +191,90 @@
 </head>
 <body>
 
-  <h1>🎮 Controle</h1>
+  <h1>🎮 Batalha do Código</h1>
 
-  <div id="escolha">
-    <button class="btn-tanque" id="btn1" onclick="escolher('tanque1')">🟦 Tanque 1</button>
-    <button class="btn-tanque" id="btn2" onclick="escolher('tanque2')">🟥 Tanque 2</button>
+  <!-- TELA DE ENTRADA -->
+  <div id="tela-entrada">
+    <input type="text" id="input-apelido" placeholder="Digite seu apelido..." maxlength="15">
+    <span class="titulo-escolha">Escolha seu tanque:</span>
+    <div id="escolha">
+      <button class="btn-tanque" id="btn1" onclick="escolherTanque('tanque1')">🟦 Azul</button>
+      <button class="btn-tanque" id="btn2" onclick="escolherTanque('tanque2')">🟥 Vermelho</button>
+    </div>
+    <button id="btn-entrar" onclick="entrar()">✅ ENTRAR</button>
   </div>
 
-  <div id="tanque-escolhido">Escolha seu tanque acima!</div>
-
-  <div id="controles">
-    <div class="vazio"></div>
-    <button class="btn-dir" onclick="enviar('cima')">⬆️</button>
-    <div class="vazio"></div>
-
-    <button class="btn-dir" onclick="enviar('esquerda')">⬅️</button>
-    <div class="vazio"></div>
-    <button class="btn-dir" onclick="enviar('direita')">➡️</button>
-
-    <div class="vazio"></div>
-    <button class="btn-dir" onclick="enviar('baixo')">⬇️</button>
-    <div class="vazio"></div>
+  <!-- TELA DE ESPERA -->
+  <div id="tela-espera">
+    <div class="apelido" id="apelido-confirmado"></div>
+    <div class="status">Aguardando o jogo começar...</div>
+    <div class="loader"></div>
   </div>
 
-  <button id="btn-tiro" onclick="atirar()">💥 ATIRAR</button>
+  <!-- TELA DE CONTROLES -->
+  <div id="tela-controles">
+    <div id="tanque-escolhido"></div>
+    <div id="controles">
+      <div class="vazio"></div>
+      <button class="btn-dir" onclick="enviar('cima')">⬆️</button>
+      <div class="vazio"></div>
+      <button class="btn-dir" onclick="enviar('esquerda')">⬅️</button>
+      <div class="vazio"></div>
+      <button class="btn-dir" onclick="enviar('direita')">➡️</button>
+      <div class="vazio"></div>
+      <button class="btn-dir" onclick="enviar('baixo')">⬇️</button>
+      <div class="vazio"></div>
+    </div>
+    <button id="btn-tiro" onclick="atirar()">💥 ATIRAR</button>
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
     let tanqueEscolhido = null;
+    let apelidoJogador = '';
 
-    function escolher(tanque) {
+    function escolherTanque(tanque) {
       tanqueEscolhido = tanque;
-      const nome = tanque === 'tanque1' ? '🟦 Tanque 1' : '🟥 Tanque 2';
-      document.getElementById('tanque-escolhido').textContent = 'Você é: ' + nome;
+      document.getElementById('btn1').classList.remove('selecionado');
+      document.getElementById('btn2').classList.remove('selecionado');
+      const btnId = tanque === 'tanque1' ? 'btn1' : 'btn2';
+      document.getElementById(btnId).classList.add('selecionado');
     }
 
-    function enviar(direcao) {
-      if (!tanqueEscolhido) {
-        alert('Escolha um tanque primeiro!');
+    function entrar() {
+      const apelido = document.getElementById('input-apelido').value.trim();
+
+      if (!apelido) {
+        alert('Digite um apelido!');
         return;
       }
+      if (!tanqueEscolhido) {
+        alert('Escolha um tanque!');
+        return;
+      }
+
+      apelidoJogador = apelido;
+
+      socket.emit('jogador-entrou', {
+        apelido: apelido,
+        tanque: tanqueEscolhido
+      });
+
+      document.getElementById('tela-entrada').style.display = 'none';
+      document.getElementById('tela-espera').style.display = 'flex';
+      document.getElementById('apelido-confirmado').textContent =
+        (tanqueEscolhido === 'tanque1' ? '🟦 ' : '🟥 ') + apelido;
+    }
+
+    socket.on('jogo-iniciado', () => {
+      document.getElementById('tela-espera').style.display = 'none';
+      document.getElementById('tela-controles').style.display = 'flex';
+      const nome = tanqueEscolhido === 'tanque1' ? '🟦 Tanque Azul' : '🟥 Tanque Vermelho';
+      document.getElementById('tanque-escolhido').textContent = 'Você é: ' + nome;
+    });
+
+    function enviar(direcao) {
       socket.emit('comando', {
         tanque: tanqueEscolhido,
         direcao: direcao
@@ -141,10 +282,6 @@
     }
 
     function atirar() {
-      if (!tanqueEscolhido) {
-        alert('Escolha um tanque primeiro!');
-        return;
-      }
       socket.emit('comando', {
         tanque: tanqueEscolhido,
         atirar: true
