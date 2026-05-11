@@ -13,26 +13,29 @@ app.get('/controle', (req, res) => {
   res.sendFile(__dirname + '/controle.html');
 });
 
-// Estado do lobby
 const lobby = {
   tanque1: null,
-  tanque2: null
+  tanque2: null,
+  tanque3: null,
+  tanque4: null
 };
 
 io.on('connection', (socket) => {
   console.log('Alguém conectou!');
 
-  // Manda o estado atual do lobby pra quem acabou de conectar
   socket.emit('lobby-atualizado', lobby);
 
-  // Jogador entrou no lobby
   socket.on('jogador-entrou', (data) => {
     const { apelido, tanque } = data;
 
-    // Verifica se a vaga já está ocupada
     if (lobby[tanque] && lobby[tanque] !== apelido) {
       socket.emit('vaga-ocupada', tanque);
       return;
+    }
+
+    // Remove apelido de outros slots se já estava
+    for (const t in lobby) {
+      if (lobby[t] === apelido) lobby[t] = null;
     }
 
     lobby[tanque] = apelido;
@@ -40,23 +43,31 @@ io.on('connection', (socket) => {
     socket.apelido = apelido;
 
     console.log(`${apelido} entrou como ${tanque}`);
-
-    // Avisa todo mundo que o lobby mudou
     io.emit('lobby-atualizado', lobby);
   });
 
-  // Iniciar jogo
   socket.on('iniciar-jogo', () => {
     console.log('Jogo iniciado!');
     io.emit('jogo-iniciado');
   });
 
-  // Comandos do jogo
+  socket.on('revanche', () => {
+    console.log('Revanche!');
+    io.emit('revanche', lobby);
+  });
+
+  socket.on('nova-partida', () => {
+    lobby.tanque1 = null;
+    lobby.tanque2 = null;
+    lobby.tanque3 = null;
+    lobby.tanque4 = null;
+    io.emit('nova-partida');
+  });
+
   socket.on('comando', (data) => {
     io.emit('comando', data);
   });
 
-  // Jogador desconectou
   socket.on('disconnect', () => {
     if (socket.tanque) {
       lobby[socket.tanque] = null;

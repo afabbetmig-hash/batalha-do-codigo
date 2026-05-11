@@ -21,15 +21,16 @@
 
     h1 {
       color: #00e5ff;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
+      text-align: center;
     }
 
-    /* ===== TELA DE ENTRADA ===== */
+    /* ===== TELA ENTRADA ===== */
     #tela-entrada {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 18px;
       width: 100%;
       padding: 20px;
     }
@@ -46,22 +47,19 @@
       outline: none;
     }
 
-    #tela-entrada input::placeholder {
-      color: #555;
-    }
+    #tela-entrada input::placeholder { color: #555; }
 
-    .titulo-escolha {
-      font-size: 1rem;
-      color: #aaaaaa;
-    }
+    .titulo-escolha { font-size: 1rem; color: #aaaaaa; }
 
     #escolha {
-      display: flex;
-      gap: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 80%;
     }
 
     .btn-tanque {
-      padding: 15px 25px;
+      padding: 15px 10px;
       font-size: 1rem;
       border: none;
       border-radius: 10px;
@@ -73,12 +71,20 @@
 
     .btn-tanque.selecionado {
       opacity: 1;
-      transform: scale(1.1);
+      transform: scale(1.05);
       border: 3px solid white;
     }
 
-    #btn1 { background-color: #0055ff; color: white; }
-    #btn2 { background-color: #ff2200; color: white; }
+    .btn-tanque.ocupado {
+      opacity: 0.2;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    #btn-azul    { background-color: #0055ff; color: white; }
+    #btn-vermelho { background-color: #ff2200; color: white; }
+    #btn-verde   { background-color: #00aa00; color: white; }
+    #btn-amarelo { background-color: #cc8800; color: white; }
 
     #btn-entrar {
       padding: 15px 40px;
@@ -92,11 +98,9 @@
       width: 80%;
     }
 
-    #btn-entrar:active {
-      background-color: #00bbdd;
-    }
+    #btn-entrar:active { background-color: #00bbdd; }
 
-    /* ===== TELA DE ESPERA ===== */
+    /* ===== TELA ESPERA ===== */
     #tela-espera {
       display: none;
       flex-direction: column;
@@ -106,16 +110,8 @@
       padding: 20px;
     }
 
-    #tela-espera .apelido {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #ffaa00;
-    }
-
-    #tela-espera .status {
-      font-size: 1rem;
-      color: #aaaaaa;
-    }
+    .apelido { font-size: 1.5rem; font-weight: bold; color: #ffaa00; }
+    .status { font-size: 1rem; color: #aaaaaa; }
 
     .loader {
       width: 50px;
@@ -126,11 +122,9 @@
       animation: spin 1s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ===== TELA DE CONTROLES ===== */
+    /* ===== TELA CONTROLES ===== */
     #tela-controles {
       display: none;
       flex-direction: column;
@@ -187,31 +181,45 @@
       background-color: #ffaa00;
       color: #0a0a1a;
     }
+
+    /* ===== TELA ELIMINADO ===== */
+    #tela-eliminado {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+    }
+
+    #tela-eliminado .emoji { font-size: 5rem; }
+    #tela-eliminado p { font-size: 1.3rem; color: #aaaaaa; }
   </style>
 </head>
 <body>
 
   <h1>🎮 Batalha do Código</h1>
 
-  <!-- TELA DE ENTRADA -->
+  <!-- ENTRADA -->
   <div id="tela-entrada">
     <input type="text" id="input-apelido" placeholder="Digite seu apelido..." maxlength="15">
     <span class="titulo-escolha">Escolha seu tanque:</span>
     <div id="escolha">
-      <button class="btn-tanque" id="btn1" onclick="escolherTanque('tanque1')">🟦 Azul</button>
-      <button class="btn-tanque" id="btn2" onclick="escolherTanque('tanque2')">🟥 Vermelho</button>
+      <button class="btn-tanque" id="btn-azul"     onclick="escolherTanque('tanque1')">🟦 Azul</button>
+      <button class="btn-tanque" id="btn-vermelho"  onclick="escolherTanque('tanque2')">🟥 Vermelho</button>
+      <button class="btn-tanque" id="btn-verde"    onclick="escolherTanque('tanque3')">🟩 Verde</button>
+      <button class="btn-tanque" id="btn-amarelo"  onclick="escolherTanque('tanque4')">🟨 Amarelo</button>
     </div>
     <button id="btn-entrar" onclick="entrar()">✅ ENTRAR</button>
   </div>
 
-  <!-- TELA DE ESPERA -->
+  <!-- ESPERA -->
   <div id="tela-espera">
     <div class="apelido" id="apelido-confirmado"></div>
     <div class="status">Aguardando o jogo começar...</div>
     <div class="loader"></div>
   </div>
 
-  <!-- TELA DE CONTROLES -->
+  <!-- CONTROLES -->
   <div id="tela-controles">
     <div id="tanque-escolhido"></div>
     <div id="controles">
@@ -228,64 +236,106 @@
     <button id="btn-tiro" onclick="atirar()">💥 ATIRAR</button>
   </div>
 
+  <!-- ELIMINADO -->
+  <div id="tela-eliminado">
+    <div class="emoji">💀</div>
+    <p>Você foi eliminado!</p>
+    <p>Aguarde o fim da partida...</p>
+  </div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
     let tanqueEscolhido = null;
     let apelidoJogador = '';
 
+    const btnIds = {
+      tanque1: 'btn-azul',
+      tanque2: 'btn-vermelho',
+      tanque3: 'btn-verde',
+      tanque4: 'btn-amarelo'
+    };
+
+    // Atualiza botões ocupados no lobby
+    socket.on('lobby-atualizado', (data) => {
+      for (const t in btnIds) {
+        const btn = document.getElementById(btnIds[t]);
+        if (data[t] && data[t] !== apelidoJogador) {
+          btn.classList.add('ocupado');
+          btn.classList.remove('selecionado');
+        } else {
+          btn.classList.remove('ocupado');
+        }
+      }
+    });
+
     function escolherTanque(tanque) {
+      const btn = document.getElementById(btnIds[tanque]);
+      if (btn.classList.contains('ocupado')) {
+        alert('Esse tanque já está ocupado!');
+        return;
+      }
       tanqueEscolhido = tanque;
-      document.getElementById('btn1').classList.remove('selecionado');
-      document.getElementById('btn2').classList.remove('selecionado');
-      const btnId = tanque === 'tanque1' ? 'btn1' : 'btn2';
-      document.getElementById(btnId).classList.add('selecionado');
+      for (const t in btnIds) {
+        document.getElementById(btnIds[t]).classList.remove('selecionado');
+      }
+      btn.classList.add('selecionado');
     }
 
     function entrar() {
       const apelido = document.getElementById('input-apelido').value.trim();
-
-      if (!apelido) {
-        alert('Digite um apelido!');
-        return;
-      }
-      if (!tanqueEscolhido) {
-        alert('Escolha um tanque!');
-        return;
-      }
+      if (!apelido) { alert('Digite um apelido!'); return; }
+      if (!tanqueEscolhido) { alert('Escolha um tanque!'); return; }
 
       apelidoJogador = apelido;
 
-      socket.emit('jogador-entrou', {
-        apelido: apelido,
-        tanque: tanqueEscolhido
-      });
+      socket.emit('jogador-entrou', { apelido, tanque: tanqueEscolhido });
 
       document.getElementById('tela-entrada').style.display = 'none';
       document.getElementById('tela-espera').style.display = 'flex';
-      document.getElementById('apelido-confirmado').textContent =
-        (tanqueEscolhido === 'tanque1' ? '🟦 ' : '🟥 ') + apelido;
+
+      const emojis = { tanque1:'🟦', tanque2:'🟥', tanque3:'🟩', tanque4:'🟨' };
+      document.getElementById('apelido-confirmado').textContent = emojis[tanqueEscolhido] + ' ' + apelido;
     }
+
+    socket.on('vaga-ocupada', () => {
+      alert('Essa vaga foi ocupada por outro jogador! Escolha outro tanque.');
+      document.getElementById('tela-espera').style.display = 'none';
+      document.getElementById('tela-entrada').style.display = 'flex';
+    });
 
     socket.on('jogo-iniciado', () => {
       document.getElementById('tela-espera').style.display = 'none';
       document.getElementById('tela-controles').style.display = 'flex';
-      const nome = tanqueEscolhido === 'tanque1' ? '🟦 Tanque Azul' : '🟥 Tanque Vermelho';
-      document.getElementById('tanque-escolhido').textContent = 'Você é: ' + nome;
+      const emojis = { tanque1:'🟦', tanque2:'🟥', tanque3:'🟩', tanque4:'🟨' };
+      document.getElementById('tanque-escolhido').textContent =
+        'Você é: ' + emojis[tanqueEscolhido] + ' ' + apelidoJogador;
+    });
+
+    socket.on('jogador-eliminado', (tanque) => {
+      if (tanque === tanqueEscolhido) {
+        document.getElementById('tela-controles').style.display = 'none';
+        document.getElementById('tela-eliminado').style.display = 'flex';
+      }
+    });
+
+    socket.on('revanche', () => {
+      document.getElementById('tela-eliminado').style.display = 'none';
+      document.getElementById('tela-espera').style.display = 'none';
+      document.getElementById('tela-controles').style.display = 'none';
+      document.getElementById('tela-espera').style.display = 'flex';
+    });
+
+    socket.on('nova-partida', () => {
+      location.reload();
     });
 
     function enviar(direcao) {
-      socket.emit('comando', {
-        tanque: tanqueEscolhido,
-        direcao: direcao
-      });
+      socket.emit('comando', { tanque: tanqueEscolhido, direcao });
     }
 
     function atirar() {
-      socket.emit('comando', {
-        tanque: tanqueEscolhido,
-        atirar: true
-      });
+      socket.emit('comando', { tanque: tanqueEscolhido, atirar: true });
     }
   </script>
 
