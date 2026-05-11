@@ -59,20 +59,12 @@
 
     .slot.conectado {
       border-color: #00e5ff;
-      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+      box-shadow: 0 0 15px rgba(0,229,255,0.3);
     }
 
     .slot-icone { font-size: 2.5rem; }
-
-    .slot-nome {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #aaaaaa;
-      text-align: center;
-    }
-
+    .slot-nome { font-size: 1rem; font-weight: bold; color: #aaaaaa; text-align: center; }
     .slot.conectado .slot-nome { color: white; }
-
     .slot-status { font-size: 0.8rem; color: #555; }
     .slot.conectado .slot-status { color: #00e5ff; }
 
@@ -92,11 +84,10 @@
       background-color: #00e5ff;
       color: #0a0a1a;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+      box-shadow: 0 0 20px rgba(0,229,255,0.5);
     }
 
     #btn-iniciar.pronto:hover { transform: scale(1.05); }
-
     .instrucao { font-size: 0.9rem; color: #666; text-align: center; }
 
     /* ===== CONTAGEM ===== */
@@ -105,7 +96,6 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      background-color: #0a0a1a;
       z-index: 9;
       align-items: center;
       justify-content: center;
@@ -125,10 +115,7 @@
 
     #jogo h1 { color: #00e5ff; font-size: 1.6rem; }
 
-    #placar {
-      display: flex;
-      gap: 20px;
-    }
+    #placar { display: flex; gap: 20px; }
 
     .info-tanque {
       display: flex;
@@ -158,14 +145,34 @@
     #barra3 { background-color: #44cc44; width: 100%; }
     #barra4 { background-color: #ffaa00; width: 100%; }
 
+    /* ===== ARENA ===== */
     #arena {
       width: 800px;
       height: 460px;
-      background: linear-gradient(135deg, #111133 0%, #0a0a22 100%);
-      border: 3px solid #00e5ff;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+      border: 3px solid #00e5ff;
+      box-shadow: 0 0 30px rgba(0,229,255,0.3);
+    }
+
+    /* Temas dos mapas */
+    #arena.deserto  { background: linear-gradient(135deg, #c8a050 0%, #a06820 100%); border-color: #ffaa00; }
+    #arena.floresta { background: linear-gradient(135deg, #1a4a1a 0%, #0a2a0a 100%); border-color: #44cc44; }
+    #arena.espacial { background: linear-gradient(135deg, #0a0a2a 0%, #000010 100%); border-color: #aa44ff; }
+    #arena.cidade   { background: linear-gradient(135deg, #2a2a3a 0%, #1a1a2a 100%); border-color: #aaaaaa; }
+    #arena.vulcao   { background: linear-gradient(135deg, #3a0a00 0%, #1a0500 100%); border-color: #ff4400; }
+
+    /* Estrelas no fundo espacial */
+    #arena.espacial::before {
+      content: '✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦';
+      position: absolute;
+      width: 100%;
+      color: rgba(255,255,255,0.15);
+      font-size: 1.2rem;
+      letter-spacing: 30px;
+      line-height: 50px;
+      top: 0; left: 0;
+      pointer-events: none;
     }
 
     .tanque {
@@ -176,6 +183,7 @@
       align-items: center;
       justify-content: center;
       font-size: 2rem;
+      z-index: 3;
       transition: opacity 0.2s;
     }
 
@@ -189,13 +197,25 @@
       z-index: 5;
     }
 
+    .obstaculo {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      z-index: 2;
+      user-select: none;
+    }
+
     /* ===== TELA FINAL ===== */
     #tela-final {
       display: none;
       position: absolute;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.9);
+      background-color: rgba(0,0,0,0.92);
       z-index: 20;
       flex-direction: column;
       align-items: center;
@@ -203,10 +223,7 @@
       gap: 25px;
     }
 
-    #tela-final h2 {
-      font-size: 2rem;
-      color: #ffaa00;
-    }
+    #tela-final h2 { font-size: 2rem; color: #ffaa00; }
 
     #nome-vencedor {
       font-size: 3rem;
@@ -215,11 +232,12 @@
       text-shadow: 0 0 30px #00e5ff;
     }
 
-    .btns-final {
-      display: flex;
-      gap: 20px;
-      margin-top: 10px;
+    #nome-mapa {
+      font-size: 1rem;
+      color: #666;
     }
+
+    .btns-final { display: flex; gap: 20px; margin-top: 10px; }
 
     .btn-final {
       padding: 15px 35px;
@@ -232,16 +250,8 @@
     }
 
     .btn-final:hover { transform: scale(1.05); }
-
-    #btn-revanche {
-      background-color: #ff6600;
-      color: white;
-    }
-
-    #btn-nova {
-      background-color: #00e5ff;
-      color: #0a0a1a;
-    }
+    #btn-revanche { background-color: #ff6600; color: white; }
+    #btn-nova     { background-color: #00e5ff; color: #0a0a1a; }
   </style>
 </head>
 <body>
@@ -284,7 +294,6 @@
   <!-- JOGO -->
   <div id="jogo">
     <h1>⚔️ Batalha do Código ⚔️</h1>
-
     <div id="placar">
       <div class="info-tanque" id="info1">
         <span class="nome-tanque" id="nome1">🟦 Azul</span>
@@ -325,9 +334,10 @@
     <div style="font-size:4rem;">🏆</div>
     <h2>VENCEDOR</h2>
     <div id="nome-vencedor"></div>
+    <div id="nome-mapa"></div>
     <div class="btns-final">
       <button class="btn-final" id="btn-revanche" onclick="revanche()">🔄 REVANCHE</button>
-      <button class="btn-final" id="btn-nova" onclick="novaPartida()">🏠 NOVA PARTIDA</button>
+      <button class="btn-final" id="btn-nova"     onclick="novaPartida()">🏠 NOVA PARTIDA</button>
     </div>
   </div>
 
@@ -338,6 +348,8 @@
     const VIDAS_MAX = 8;
 
     const jogadores = { tanque1: null, tanque2: null, tanque3: null, tanque4: null };
+    let obstaculosAtuais = [];
+    let mapaAtual = '';
 
     const tanques = {
       tanque1: document.getElementById('tanque1'),
@@ -353,19 +365,27 @@
       tanque4: { x: 690, y: 340, dir: 'esquerda' }
     };
 
-    const vidas = { tanque1: VIDAS_MAX, tanque2: VIDAS_MAX, tanque3: VIDAS_MAX, tanque4: VIDAS_MAX };
-    const eliminado = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
-
-    const cores = {
-      tanque1: '#4488ff',
-      tanque2: '#ff4444',
-      tanque3: '#44cc44',
-      tanque4: '#ffaa00'
+    const posicoesIniciais = {
+      tanque1: { x: 50,  y: 200, dir: 'direita' },
+      tanque2: { x: 690, y: 200, dir: 'esquerda' },
+      tanque3: { x: 50,  y: 340, dir: 'direita' },
+      tanque4: { x: 690, y: 340, dir: 'esquerda' }
     };
 
-    const velocidade = 10;
+    const vidas = { tanque1: VIDAS_MAX, tanque2: VIDAS_MAX, tanque3: VIDAS_MAX, tanque4: VIDAS_MAX };
+    const eliminado = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
     const cooldowns = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
+    const cores = { tanque1: '#4488ff', tanque2: '#ff4444', tanque3: '#44cc44', tanque4: '#ffaa00' };
 
+    const nomesMapa = {
+      deserto:  '🏜️ Deserto',
+      floresta: '🌿 Floresta',
+      espacial: '🌌 Espacial',
+      cidade:   '🏙️ Cidade',
+      vulcao:   '🔥 Vulcão'
+    };
+
+    // Lobby
     socket.on('lobby-atualizado', (data) => {
       jogadores.tanque1 = data.tanque1;
       jogadores.tanque2 = data.tanque2;
@@ -386,19 +406,25 @@
         }
       });
 
-      const ativos = [data.tanque1, data.tanque2, data.tanque3, data.tanque4].filter(Boolean).length;
+      const ativos = Object.values(data).filter(Boolean).length;
       const btn = document.getElementById('btn-iniciar');
-      if (ativos >= 2) {
-        btn.classList.add('pronto');
-      } else {
-        btn.classList.remove('pronto');
-      }
+      if (ativos >= 2) btn.classList.add('pronto');
+      else btn.classList.remove('pronto');
     });
 
     function iniciarBatalha() {
       const ativos = Object.values(jogadores).filter(Boolean).length;
       if (ativos < 2) return;
+      socket.emit('iniciar-jogo');
+    }
 
+    socket.on('jogo-iniciado', (data) => {
+      mapaAtual = data.mapa;
+      obstaculosAtuais = data.obstaculos;
+      iniciarContagem();
+    });
+
+    function iniciarContagem() {
       [1,2,3,4].forEach(i => {
         const t = 'tanque' + i;
         const emoji = ['🟦','🟥','🟩','🟨'][i-1];
@@ -412,11 +438,27 @@
         }
       });
 
-      socket.emit('iniciar-jogo');
+      // Aplica tema do mapa
+      const arena = document.getElementById('arena');
+      arena.className = mapaAtual;
+
+      // Gera obstáculos visuais
+      document.querySelectorAll('.obstaculo').forEach(o => o.remove());
+      obstaculosAtuais.forEach(ob => {
+        const el = document.createElement('div');
+        el.classList.add('obstaculo');
+        el.textContent = ob.tipo;
+        el.style.left = ob.x + 'px';
+        el.style.top  = ob.y + 'px';
+        arena.appendChild(el);
+      });
+
       document.getElementById('tela-lobby').style.display = 'none';
 
       const contagem = document.getElementById('contagem');
+      contagem.style.background = 'rgba(0,0,0,0.85)';
       contagem.style.display = 'flex';
+
       let num = 3;
       contagem.textContent = num;
 
@@ -435,12 +477,17 @@
       }, 1000);
     }
 
-    socket.on('jogo-iniciado', () => {});
-
     function atualizarVidas(tanque) {
-      const i = tanque.replace('tanque','');
+      const i = tanque.replace('tanque', '');
       const pct = (vidas[tanque] / VIDAS_MAX) * 100;
       document.getElementById('barra' + i).style.width = pct + '%';
+    }
+
+    function colideObstaculo(nx, ny) {
+      return obstaculosAtuais.some(ob =>
+        nx < ob.x + 50 && nx + 60 > ob.x &&
+        ny < ob.y + 50 && ny + 60 > ob.y
+      );
     }
 
     socket.on('comando', (data) => {
@@ -453,23 +500,31 @@
 
       if (data.direcao) {
         pos.dir = data.direcao;
-        if (data.direcao === 'cima')     pos.y -= velocidade;
-        if (data.direcao === 'baixo')    pos.y += velocidade;
-        if (data.direcao === 'esquerda') pos.x -= velocidade;
-        if (data.direcao === 'direita')  pos.x += velocidade;
 
-        pos.x = Math.max(0, Math.min(740, pos.x));
-        pos.y = Math.max(0, Math.min(400, pos.y));
+        let nx = pos.x;
+        let ny = pos.y;
 
-        tanque.style.left = pos.x + 'px';
-        tanque.style.top  = pos.y + 'px';
+        if (data.direcao === 'cima')     ny -= 10;
+        if (data.direcao === 'baixo')    ny += 10;
+        if (data.direcao === 'esquerda') nx -= 10;
+        if (data.direcao === 'direita')  nx += 10;
+
+        nx = Math.max(0, Math.min(740, nx));
+        ny = Math.max(0, Math.min(400, ny));
+
+        // Só move se não colidir com obstáculo
+        if (!colideObstaculo(nx, ny)) {
+          pos.x = nx;
+          pos.y = ny;
+          tanque.style.left = pos.x + 'px';
+          tanque.style.top  = pos.y + 'px';
+        }
       }
 
       if (data.atirar) atirar(data.tanque);
     });
 
     function atirar(nomeTanque) {
-      // Cooldown de tiro — 600ms entre tiros
       if (cooldowns[nomeTanque]) return;
       cooldowns[nomeTanque] = true;
       setTimeout(() => { cooldowns[nomeTanque] = false; }, 600);
@@ -501,10 +556,23 @@
         tiro.style.left = tx + 'px';
         tiro.style.top  = ty + 'px';
 
-        // Verifica colisão com todos os inimigos
+        // Colisão com obstáculos
+        const bateObstaculo = obstaculosAtuais.some(ob =>
+          tx > ob.x && tx < ob.x + 50 &&
+          ty > ob.y && ty < ob.y + 50
+        );
+
+        if (bateObstaculo) {
+          clearInterval(intervalo);
+          tiro.remove();
+          return;
+        }
+
+        // Colisão com inimigos
         for (const inimigo in tanques) {
           if (inimigo === nomeTanque) continue;
           if (eliminado[inimigo]) continue;
+          if (!jogadores[inimigo]) continue;
 
           const posInimigo = posicoes[inimigo];
           if (
@@ -524,6 +592,7 @@
             if (vidas[inimigo] <= 0) {
               eliminado[inimigo] = true;
               tanques[inimigo].classList.add('eliminado');
+              socket.emit('jogador-eliminado', inimigo);
               verificarVencedor();
             }
             return;
@@ -544,33 +613,29 @@
         const vencedor = vivos[0];
         const emoji = { tanque1:'🟦', tanque2:'🟥', tanque3:'🟩', tanque4:'🟨' };
         document.getElementById('nome-vencedor').textContent = emoji[vencedor] + ' ' + jogadores[vencedor];
+        document.getElementById('nome-mapa').textContent = 'Mapa: ' + nomesMapa[mapaAtual];
         setTimeout(() => {
           document.getElementById('tela-final').style.display = 'flex';
         }, 1000);
       }
     }
 
-    function revanche() {
-      socket.emit('revanche');
-    }
+    function revanche() { socket.emit('revanche'); }
+    function novaPartida() { socket.emit('nova-partida'); }
 
-    function novaPartida() {
-      socket.emit('nova-partida');
-    }
-
-    socket.on('revanche', (lobbyAtual) => {
-      // Reseta tudo mantendo os jogadores
+    socket.on('revanche', (data) => {
       jogoAtivo = false;
+      mapaAtual = data.mapa;
+      obstaculosAtuais = data.obstaculos;
+
       for (const t in vidas) { vidas[t] = VIDAS_MAX; }
       for (const t in eliminado) { eliminado[t] = false; }
       for (const t in cooldowns) { cooldowns[t] = false; }
 
-      posicoes.tanque1 = { x: 50,  y: 200, dir: 'direita' };
-      posicoes.tanque2 = { x: 690, y: 200, dir: 'esquerda' };
-      posicoes.tanque3 = { x: 50,  y: 340, dir: 'direita' };
-      posicoes.tanque4 = { x: 690, y: 340, dir: 'esquerda' };
-
-      for (const t in tanques) {
+      for (const t in posicoes) {
+        posicoes[t].x = posicoesIniciais[t].x;
+        posicoes[t].y = posicoesIniciais[t].y;
+        posicoes[t].dir = posicoesIniciais[t].dir;
         tanques[t].classList.remove('eliminado');
         tanques[t].style.opacity = '1';
         tanques[t].style.left = posicoes[t].x + 'px';
@@ -584,12 +649,10 @@
       document.getElementById('tela-final').style.display = 'none';
       document.getElementById('jogo').style.display = 'none';
 
-      iniciarBatalha();
+      iniciarContagem();
     });
 
-    socket.on('nova-partida', () => {
-      location.reload();
-    });
+    socket.on('nova-partida', () => { location.reload(); });
   </script>
 
 </body>

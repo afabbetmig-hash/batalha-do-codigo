@@ -20,9 +20,60 @@ const lobby = {
   tanque4: null
 };
 
+const mapas = ['deserto', 'floresta', 'espacial', 'cidade', 'vulcao'];
+
+function gerarObstaculos(mapa) {
+  const obstaculos = [];
+  const quantidade = 8 + Math.floor(Math.random() * 5); // 8 a 12 obstáculos
+
+  const tiposObstaculo = {
+    deserto:  ['🪨', '🌵', '🪨'],
+    floresta: ['🌲', '🌳', '🪨'],
+    espacial: ['🪐', '☄️', '🛸'],
+    cidade:   ['🏢', '🚧', '🪣'],
+    vulcao:   ['🪨', '🔥', '🌋']
+  };
+
+  const tipos = tiposObstaculo[mapa];
+
+  // Posições proibidas (onde os tanques começam)
+  const proibidas = [
+    { x: 50, y: 200 }, { x: 690, y: 200 },
+    { x: 50, y: 340 }, { x: 690, y: 340 }
+  ];
+
+  let tentativas = 0;
+  while (obstaculos.length < quantidade && tentativas < 200) {
+    tentativas++;
+    const x = 60 + Math.floor(Math.random() * 640);
+    const y = 60 + Math.floor(Math.random() * 340);
+
+    // Verifica se não está em cima de um tanque
+    const colideTanque = proibidas.some(p =>
+      Math.abs(p.x - x) < 80 && Math.abs(p.y - y) < 80
+    );
+
+    // Verifica se não está em cima de outro obstáculo
+    const colideObstaculo = obstaculos.some(o =>
+      Math.abs(o.x - x) < 60 && Math.abs(o.y - y) < 60
+    );
+
+    if (!colideTanque && !colideObstaculo) {
+      obstaculos.push({
+        x, y,
+        tipo: tipos[Math.floor(Math.random() * tipos.length)]
+      });
+    }
+  }
+
+  return obstaculos;
+}
+
+let mapaAtual = null;
+let obstaculosAtuais = [];
+
 io.on('connection', (socket) => {
   console.log('Alguém conectou!');
-
   socket.emit('lobby-atualizado', lobby);
 
   socket.on('jogador-entrou', (data) => {
@@ -33,7 +84,6 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Remove apelido de outros slots se já estava
     for (const t in lobby) {
       if (lobby[t] === apelido) lobby[t] = null;
     }
@@ -47,13 +97,18 @@ io.on('connection', (socket) => {
   });
 
   socket.on('iniciar-jogo', () => {
-    console.log('Jogo iniciado!');
-    io.emit('jogo-iniciado');
+    // Sorteia mapa e gera obstáculos
+    mapaAtual = mapas[Math.floor(Math.random() * mapas.length)];
+    obstaculosAtuais = gerarObstaculos(mapaAtual);
+
+    console.log(`Jogo iniciado! Mapa: ${mapaAtual}`);
+    io.emit('jogo-iniciado', { mapa: mapaAtual, obstaculos: obstaculosAtuais });
   });
 
   socket.on('revanche', () => {
-    console.log('Revanche!');
-    io.emit('revanche', lobby);
+    mapaAtual = mapas[Math.floor(Math.random() * mapas.length)];
+    obstaculosAtuais = gerarObstaculos(mapaAtual);
+    io.emit('revanche', { lobby, mapa: mapaAtual, obstaculos: obstaculosAtuais });
   });
 
   socket.on('nova-partida', () => {
