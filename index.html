@@ -17,30 +17,16 @@
       overflow: hidden;
     }
     #tela-lobby {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 25px;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-color: #0a0a1a;
-      z-index: 10;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 25px; position: absolute;
+      width: 100%; height: 100%; background-color: #0a0a1a; z-index: 10;
     }
     #tela-lobby h1 { font-size: 2.8rem; color: #00e5ff; text-shadow: 0 0 20px #00e5ff; }
     .lobby-jogadores { display: flex; gap: 20px; align-items: center; }
     .slot {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      width: 150px;
-      padding: 18px;
-      border-radius: 15px;
-      border: 2px solid #333;
-      background-color: #111133;
-      transition: all 0.3s;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      width: 150px; padding: 18px; border-radius: 15px;
+      border: 2px solid #333; background-color: #111133; transition: all 0.3s;
     }
     .slot.conectado { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0,229,255,0.3); }
     .slot-icone { font-size: 2.5rem; }
@@ -49,36 +35,20 @@
     .slot-status { font-size: 0.8rem; color: #555; }
     .slot.conectado .slot-status { color: #00e5ff; }
     #btn-iniciar {
-      padding: 15px 45px;
-      font-size: 1.3rem;
-      background-color: #555;
-      color: #999;
-      border: none;
-      border-radius: 15px;
-      cursor: not-allowed;
-      font-weight: bold;
-      transition: all 0.3s;
+      padding: 15px 45px; font-size: 1.3rem; background-color: #555;
+      color: #999; border: none; border-radius: 15px; cursor: not-allowed;
+      font-weight: bold; transition: all 0.3s;
     }
     #btn-iniciar.pronto {
-      background-color: #00e5ff;
-      color: #0a0a1a;
-      cursor: pointer;
+      background-color: #00e5ff; color: #0a0a1a; cursor: pointer;
       box-shadow: 0 0 20px rgba(0,229,255,0.5);
     }
     #btn-iniciar.pronto:hover { transform: scale(1.05); }
     .instrucao { font-size: 0.9rem; color: #666; text-align: center; }
     #contagem {
-      display: none;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 9;
-      align-items: center;
-      justify-content: center;
-      font-size: 10rem;
-      font-weight: bold;
-      color: #00e5ff;
-      text-shadow: 0 0 40px #00e5ff;
+      display: none; position: absolute; width: 100%; height: 100%; z-index: 9;
+      align-items: center; justify-content: center; font-size: 10rem;
+      font-weight: bold; color: #00e5ff; text-shadow: 0 0 40px #00e5ff;
       background: rgba(0,0,0,0.85);
     }
     #jogo { display: none; flex-direction: column; align-items: center; gap: 8px; }
@@ -86,16 +56,11 @@
     #placar { display: flex; gap: 20px; }
     .info-tanque { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .nome-tanque { font-size: 0.85rem; font-weight: bold; }
-    #nome1 { color: #4488ff; }
-    #nome2 { color: #ff4444; }
-    #nome3 { color: #44cc44; }
-    #nome4 { color: #ffaa00; }
+    #nome1 { color: #4488ff; } #nome2 { color: #ff4444; }
+    #nome3 { color: #44cc44; } #nome4 { color: #ffaa00; }
     .barra-vida-container {
-      width: 130px; height: 14px;
-      background-color: #333;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 2px solid #555;
+      width: 130px; height: 14px; background-color: #333;
+      border-radius: 10px; overflow: hidden; border: 2px solid #555;
     }
     .barra-vida { height: 100%; border-radius: 10px; transition: width 0.3s; }
     #barra1 { background-color: #4488ff; width: 100%; }
@@ -103,69 +68,28 @@
     #barra3 { background-color: #44cc44; width: 100%; }
     #barra4 { background-color: #ffaa00; width: 100%; }
     #arena {
-      width: 900px;
-      height: 500px;
-      position: relative;
-      overflow: hidden;
-      border: 3px solid #00e5ff;
+      width: 900px; height: 500px; position: relative;
+      overflow: hidden; border: 3px solid #00e5ff;
       box-shadow: 0 0 30px rgba(0,229,255,0.3);
     }
-    #arena-bg {
-      position: absolute;
-      width: 100%; height: 100%;
-      top: 0; left: 0; z-index: 0;
-    }
-    .tanque {
-      width: 48px;
-      height: 48px;
-      position: absolute;
-      z-index: 3;
-      transition: opacity 0.2s;
-    }
+    #arena-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; }
+    .tanque { width: 48px; height: 48px; position: absolute; z-index: 3; transition: opacity 0.2s; }
     .tanque.eliminado { display: none; }
-    .tiro {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      position: absolute;
-      z-index: 5;
-    }
+    .tiro { width: 8px; height: 8px; border-radius: 50%; position: absolute; z-index: 5; }
     .obstaculo {
-      position: absolute;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
+      position: absolute; z-index: 2; display: flex;
+      align-items: center; justify-content: center; font-size: 2rem;
     }
     #tela-final {
-      display: none;
-      position: absolute;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.92);
-      z-index: 20;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 25px;
+      display: none; position: absolute; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.92); z-index: 20;
+      flex-direction: column; align-items: center; justify-content: center; gap: 25px;
     }
     #tela-final h2 { font-size: 2rem; color: #ffaa00; }
-    #nome-vencedor {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #00e5ff;
-      text-shadow: 0 0 30px #00e5ff;
-    }
+    #nome-vencedor { font-size: 3rem; font-weight: bold; color: #00e5ff; text-shadow: 0 0 30px #00e5ff; }
     #nome-mapa { font-size: 1rem; color: #666; }
     .btns-final { display: flex; gap: 20px; margin-top: 10px; }
-    .btn-final {
-      padding: 15px 35px;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.1s;
-    }
+    .btn-final { padding: 15px 35px; font-size: 1.1rem; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; transition: transform 0.1s; }
     .btn-final:hover { transform: scale(1.05); }
     #btn-revanche { background-color: #ff6600; color: white; }
     #btn-nova     { background-color: #00e5ff; color: #0a0a1a; }
@@ -221,9 +145,9 @@
     const socket = io();
     let jogoAtivo = false;
     const VIDAS_MAX = 8;
-    const TAM = 48;   // tamanho do canvas
-    const R   = 16;   // raio da bola
-    const CANO = 14;  // comprimento do cano
+    const TAM = 48;
+    const R   = 16;
+    const CANO = 14;
 
     const jogadores = { tanque1: null, tanque2: null, tanque3: null, tanque4: null };
     let obstaculosAtuais = [];
@@ -274,23 +198,34 @@
     };
 
     // ===== DESENHAR BONECO =====
-    // Canvas 48x48. Antes de rotacionar via CSS, o cano aponta para CIMA (topo do canvas).
-    // cx=24, cy=24. Bola raio 16. Cano: de (cy-R-CANO) até (cy-R), largura 4px centralizado.
+    // O canvas NÃO é rotacionado internamente.
+    // A rotação é feita via CSS: rotate(pos.dir + 90)
+    // Dentro do canvas: cano aponta para CIMA (cy - R - CANO), bola no centro (cx, cy)
+    // pos.dir = ângulo do joystick em graus, onde:
+    //   0   = direita
+    //   90  = baixo
+    //   180 = esquerda
+    //   -90 = cima
+    // CSS rotate(pos.dir + 90) faz o cano (que aponta pra cima no canvas)
+    // apontar na direção pos.dir do joystick.
+    // Logo: ângulo real do cano no mundo = pos.dir graus (sistema CSS, Y pra baixo)
+    // Em Math.cos/sin: rad = pos.dir * PI/180
+
     function desenharBoneco(nomeTanque) {
       const canvas = tanques[nomeTanque];
       if (!canvas || !(canvas instanceof HTMLCanvasElement)) return;
       const ctx = canvas.getContext('2d');
       const cor = cores[nomeTanque];
-      const cx = TAM / 2;  // 24
-      const cy = TAM / 2;  // 24
+      const cx = TAM / 2;
+      const cy = TAM / 2;
 
       ctx.clearRect(0, 0, TAM, TAM);
 
-      // Cano — aponta para cima (y decrescente), centralizado em cx
+      // Cano aponta pra cima no canvas
       ctx.fillStyle = '#333';
       ctx.fillRect(cx - 2, cy - R - CANO, 4, CANO);
       ctx.fillStyle = '#111';
-      ctx.fillRect(cx - 2, cy - R - CANO, 4, 3); // boca do cano
+      ctx.fillRect(cx - 2, cy - R - CANO, 4, 3);
 
       // Bola com foto
       ctx.save();
@@ -299,7 +234,7 @@
       ctx.clip();
       const foto = fotos[nomeTanque];
       if (foto.complete && foto.naturalWidth > 0) {
-        const s = Math.min(foto.naturalWidth, foto.naturalHeight);
+        const s  = Math.min(foto.naturalWidth, foto.naturalHeight);
         const sx = (foto.naturalWidth  - s) / 2;
         const sy = (foto.naturalHeight - s) / 2;
         ctx.drawImage(foto, sx, sy, s, s, cx - R, cy - R, R * 2, R * 2);
@@ -501,22 +436,16 @@
       const pos = posicoes[nomeTanque];
       const cor = cores[nomeTanque];
 
-      // O canvas é rotacionado por CSS: rotate(dir+90)
-      // No canvas sem rotação, o cano aponta para CIMA (-Y).
-      // A frente real no mundo = direção do joystick = pos.dir graus (0=direita, 90=baixo...)
-      // Mas o CSS rotate(dir+90) mapeia "cima do canvas" para a direção do movimento.
-      // Então: ângulo real do cano = (pos.dir + 90) - 90 = pos.dir
-      // Em radianos: pos.dir * PI/180, mas atenção: CSS rotate é horário, canvas Y é pra baixo.
-      // Frente real = pos.dir graus no sistema cartesiano CSS (x=direita, y=baixo)
-      const rad = (pos.dir - 180) * Math.PI / 180;
-
-      // Ponta do cano no mundo:
-      // centro do canvas na arena = pos.x + TAM/2, pos.y + TAM/2
-      // deslocamento na direção da frente = R + CANO pixels
+      // pos.dir = ângulo do joystick (0=direita, 90=baixo, -90=cima, 180=esquerda)
+      // CSS aplica rotate(pos.dir + 90), que faz o cano (apontando pra cima no canvas)
+      // girar para a direção pos.dir no mundo.
+      // Então o ângulo real do cano no mundo = pos.dir graus
+      // Math.cos/sin usam radianos com Y pra baixo (igual CSS)
+      const rad = pos.dir * Math.PI / 180;
       const canoDist = R + CANO;
+
       let tx = pos.x + TAM/2 + Math.cos(rad) * canoDist;
       let ty = pos.y + TAM/2 + Math.sin(rad) * canoDist;
-
       const ddx = Math.cos(rad) * 12;
       const ddy = Math.sin(rad) * 12;
 
