@@ -116,8 +116,8 @@
       top: 0; left: 0; z-index: 0;
     }
     .tanque {
-      width: 80px;
-      height: 80px;
+      width: 48px;
+      height: 48px;
       position: absolute;
       z-index: 3;
       transition: opacity 0.2s;
@@ -173,7 +173,6 @@
 </head>
 <body>
 
-  <!-- LOBBY -->
   <div id="tela-lobby">
     <h1>⚔️ Batalha do Código ⚔️</h1>
     <p style="color:#aaaaaa;">Grupo ACDC — escaneie o QR Code e entre no jogo!</p>
@@ -187,10 +186,8 @@
     <p class="instrucao">Precisa de pelo menos 2 jogadores para iniciar</p>
   </div>
 
-  <!-- CONTAGEM -->
   <div id="contagem">3</div>
 
-  <!-- JOGO -->
   <div id="jogo">
     <h1>⚔️ Batalha do Código ⚔️</h1>
     <div id="placar">
@@ -201,14 +198,13 @@
     </div>
     <div id="arena">
       <canvas id="arena-bg"></canvas>
-      <canvas class="tanque" id="tanque1" width="80" height="80" style="left:60px; top:220px;"></canvas>
-      <canvas class="tanque" id="tanque2" width="80" height="80" style="left:792px; top:220px;"></canvas>
-      <canvas class="tanque" id="tanque3" width="80" height="80" style="left:60px; top:360px;"></canvas>
-      <canvas class="tanque" id="tanque4" width="80" height="80" style="left:792px; top:360px;"></canvas>
+      <canvas class="tanque" id="tanque1" width="48" height="48" style="left:60px; top:220px;"></canvas>
+      <canvas class="tanque" id="tanque2" width="48" height="48" style="left:792px; top:220px;"></canvas>
+      <canvas class="tanque" id="tanque3" width="48" height="48" style="left:60px; top:360px;"></canvas>
+      <canvas class="tanque" id="tanque4" width="48" height="48" style="left:792px; top:360px;"></canvas>
     </div>
   </div>
 
-  <!-- TELA FINAL -->
   <div id="tela-final">
     <div style="font-size:4rem;">🏆</div>
     <h2>VENCEDOR</h2>
@@ -225,9 +221,9 @@
     const socket = io();
     let jogoAtivo = false;
     const VIDAS_MAX = 8;
-    const TAM = 80;  // canvas do personagem
-    const R   = 30;  // raio da bola (médio, igual ao de quando tinha corpo)
-    const CANO_COMP = 16; // comprimento do cano
+    const TAM = 48;   // tamanho do canvas
+    const R   = 16;   // raio da bola
+    const CANO = 14;  // comprimento do cano
 
     const jogadores = { tanque1: null, tanque2: null, tanque3: null, tanque4: null };
     let obstaculosAtuais = [];
@@ -273,46 +269,40 @@
       deserto:'🏜️ Deserto', floresta:'🌿 Floresta',
       espacial:'🌌 Espacial', cidade:'🏙️ Cidade', vulcao:'🔥 Vulcão'
     };
-
     const emojiObstaculo = {
       deserto:'🌵', floresta:'🌲', espacial:'🪨', cidade:'🏢', vulcao:'🌋'
     };
 
-    // ===== DESENHAR PERSONAGEM =====
-    // Só bola com foto + cano saindo para cima (frente)
+    // ===== DESENHAR BONECO =====
+    // Canvas 48x48. Antes de rotacionar via CSS, o cano aponta para CIMA (topo do canvas).
+    // cx=24, cy=24. Bola raio 16. Cano: de (cy-R-CANO) até (cy-R), largura 4px centralizado.
     function desenharBoneco(nomeTanque) {
       const canvas = tanques[nomeTanque];
       if (!canvas || !(canvas instanceof HTMLCanvasElement)) return;
       const ctx = canvas.getContext('2d');
       const cor = cores[nomeTanque];
-      const cx = TAM / 2;
-      const cy = TAM / 2;
+      const cx = TAM / 2;  // 24
+      const cy = TAM / 2;  // 24
 
       ctx.clearRect(0, 0, TAM, TAM);
 
-      // Cano — sai do topo da bola para cima
-      const canoX = cx - 3;
-      const canoY = cy - R - CANO_COMP;
+      // Cano — aponta para cima (y decrescente), centralizado em cx
       ctx.fillStyle = '#333';
-      ctx.fillRect(canoX, canoY, 6, CANO_COMP);
-      // Boca do cano mais escura
-      ctx.fillStyle = '#000';
-      ctx.fillRect(canoX, canoY, 6, 4);
+      ctx.fillRect(cx - 2, cy - R - CANO, 4, CANO);
+      ctx.fillStyle = '#111';
+      ctx.fillRect(cx - 2, cy - R - CANO, 4, 3); // boca do cano
 
-      // Bola — foto recortada em círculo
+      // Bola com foto
       ctx.save();
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.clip();
-
       const foto = fotos[nomeTanque];
       if (foto.complete && foto.naturalWidth > 0) {
-        const sw = foto.naturalWidth;
-        const sh = foto.naturalHeight;
-        const crop = Math.min(sw, sh * 0.75);
-        const sx   = (sw - crop) / 2;
-        const sy   = sh * 0.03;
-        ctx.drawImage(foto, sx, sy, crop, crop, cx - R, cy - R, R * 2, R * 2);
+        const s = Math.min(foto.naturalWidth, foto.naturalHeight);
+        const sx = (foto.naturalWidth  - s) / 2;
+        const sy = (foto.naturalHeight - s) / 2;
+        ctx.drawImage(foto, sx, sy, s, s, cx - R, cy - R, R * 2, R * 2);
       } else {
         ctx.fillStyle = cor;
         ctx.fill();
@@ -321,16 +311,9 @@
 
       // Borda colorida
       ctx.strokeStyle = cor;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Borda branca fina interna
-      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R - 3, 0, Math.PI * 2);
       ctx.stroke();
     }
 
@@ -345,7 +328,6 @@
       const canvas = document.getElementById('arena-bg');
       canvas.width = 900; canvas.height = 500;
       const ctx = canvas.getContext('2d');
-
       if (mapa === 'deserto') {
         const g = ctx.createLinearGradient(0,0,900,500);
         g.addColorStop(0,'#d4a853'); g.addColorStop(1,'#a0722a');
@@ -426,18 +408,14 @@
           tanques[t].style.display = 'none';
         }
       });
-
       desenharFundo(mapaAtual);
-
       document.querySelectorAll('.obstaculo').forEach(o => o.remove());
       obstaculosAtuais.forEach(ob => {
         const el = document.createElement('div');
         el.classList.add('obstaculo');
-        el.style.left   = ob.x + 'px';
-        el.style.top    = ob.y + 'px';
-        el.style.width  = ob.w + 'px';
-        el.style.height = ob.h + 'px';
-        el.textContent  = emojiObstaculo[mapaAtual] || '🪨';
+        el.style.left = ob.x+'px'; el.style.top = ob.y+'px';
+        el.style.width = ob.w+'px'; el.style.height = ob.h+'px';
+        el.textContent = emojiObstaculo[mapaAtual] || '🪨';
         document.getElementById('arena').appendChild(el);
       });
     }
@@ -489,18 +467,16 @@
         let nx = pos.x, ny = pos.y;
         const sx = (data.dx * vel) / steps;
         const sy = (data.dy * vel) / steps;
-
         for (let i=0; i<steps; i++) {
           const tx = Math.max(0, Math.min(900-TAM, nx+sx));
           const ty = Math.max(0, Math.min(500-TAM, ny+sy));
           if (!colideObstaculo(tx, ny)) nx = tx;
           if (!colideObstaculo(nx, ty)) ny = ty;
         }
-
         pos.x = nx; pos.y = ny;
 
         if (Math.abs(data.dx) > 0.15 || Math.abs(data.dy) > 0.15) {
-          const angAlvo  = Math.atan2(data.dy, data.dx) * 180 / Math.PI;
+          const angAlvo = Math.atan2(data.dy, data.dx) * 180 / Math.PI;
           const rA = pos.dir * Math.PI/180;
           const rB = angAlvo  * Math.PI/180;
           const cn = Math.cos(rA)+(Math.cos(rB)-Math.cos(rA))*0.25;
@@ -525,11 +501,19 @@
       const pos = posicoes[nomeTanque];
       const cor = cores[nomeTanque];
 
-      // Direção real do cano (frente = cima antes da rotação = dir - 90)
-      const rad = (pos.dir - 90) * Math.PI / 180;
+      // O canvas é rotacionado por CSS: rotate(dir+90)
+      // No canvas sem rotação, o cano aponta para CIMA (-Y).
+      // A frente real no mundo = direção do joystick = pos.dir graus (0=direita, 90=baixo...)
+      // Mas o CSS rotate(dir+90) mapeia "cima do canvas" para a direção do movimento.
+      // Então: ângulo real do cano = (pos.dir + 90) - 90 = pos.dir
+      // Em radianos: pos.dir * PI/180, mas atenção: CSS rotate é horário, canvas Y é pra baixo.
+      // Frente real = pos.dir graus no sistema cartesiano CSS (x=direita, y=baixo)
+      const rad = pos.dir * Math.PI / 180;
 
-      // Ponta do cano = centro da bola + (R + comprimento do cano) na direção da frente
-      const canoDist = R + CANO_COMP;
+      // Ponta do cano no mundo:
+      // centro do canvas na arena = pos.x + TAM/2, pos.y + TAM/2
+      // deslocamento na direção da frente = R + CANO pixels
+      const canoDist = R + CANO;
       let tx = pos.x + TAM/2 + Math.cos(rad) * canoDist;
       let ty = pos.y + TAM/2 + Math.sin(rad) * canoDist;
 
@@ -540,8 +524,8 @@
       tiro.classList.add('tiro');
       tiro.style.backgroundColor = cor;
       tiro.style.boxShadow = `0 0 8px ${cor}`;
-      tiro.style.left = (tx - 4)+'px';
-      tiro.style.top  = (ty - 4)+'px';
+      tiro.style.left = (tx-4)+'px';
+      tiro.style.top  = (ty-4)+'px';
       document.getElementById('arena').appendChild(tiro);
 
       const intervalo = setInterval(() => {
@@ -563,17 +547,17 @@
             vidas[inimigo]--;
             atualizarVidas(inimigo);
             tanques[inimigo].style.opacity='0.2';
-            setTimeout(()=>{if(!eliminado[inimigo])tanques[inimigo].style.opacity='1';},400);
+            setTimeout(()=>{ if(!eliminado[inimigo]) tanques[inimigo].style.opacity='1'; },400);
             if (vidas[inimigo]<=0) {
               eliminado[inimigo]=true;
               tanques[inimigo].classList.add('eliminado');
-              socket.emit('jogador-eliminado',inimigo);
+              socket.emit('jogador-eliminado', inimigo);
               verificarVencedor();
             }
             return;
           }
         }
-        if (tx<0||tx>900||ty<0||ty>500){clearInterval(intervalo);tiro.remove();}
+        if (tx<0||tx>900||ty<0||ty>500){ clearInterval(intervalo); tiro.remove(); }
       }, 16);
     }
 
@@ -581,18 +565,18 @@
       const vivos = Object.keys(eliminado).filter(t=>!eliminado[t]&&jogadores[t]);
       if (vivos.length===1) {
         jogoAtivo=false;
-        if(bonecoLoop){clearInterval(bonecoLoop);bonecoLoop=null;}
+        if(bonecoLoop){ clearInterval(bonecoLoop); bonecoLoop=null; }
         const v=vivos[0];
         const emoji={tanque1:'🟦',tanque2:'🟥',tanque3:'🟩',tanque4:'🟨'};
         document.getElementById('nome-vencedor').textContent=emoji[v]+' '+jogadores[v];
         document.getElementById('nome-mapa').textContent='Mapa: '+nomesMapa[mapaAtual];
-        setTimeout(()=>{document.getElementById('tela-final').style.display='flex';},1000);
+        setTimeout(()=>{ document.getElementById('tela-final').style.display='flex'; },1000);
       }
     }
 
     function resetarJogo() {
       jogoAtivo=false;
-      if(bonecoLoop){clearInterval(bonecoLoop);bonecoLoop=null;}
+      if(bonecoLoop){ clearInterval(bonecoLoop); bonecoLoop=null; }
       for(const t in vidas)     vidas[t]=VIDAS_MAX;
       for(const t in eliminado) eliminado[t]=false;
       for(const t in cooldowns) cooldowns[t]=false;
@@ -618,7 +602,6 @@
       mapaAtual=data.mapa; obstaculosAtuais=data.obstaculos;
       resetarJogo(); prepararJogo(); iniciarContagem();
     });
-
     socket.on('nova-partida',()=>{ location.reload(); });
   </script>
 </body>
