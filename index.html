@@ -508,7 +508,7 @@
       // Então: ângulo real do cano = (pos.dir + 90) - 90 = pos.dir
       // Em radianos: pos.dir * PI/180, mas atenção: CSS rotate é horário, canvas Y é pra baixo.
       // Frente real = pos.dir graus no sistema cartesiano CSS (x=direita, y=baixo)
-      const rad = (pos.dir - 90) * Math.PI / 180;
+      const rad = (pos.dir - 180) * Math.PI / 180;
 
       // Ponta do cano no mundo:
       // centro do canvas na arena = pos.x + TAM/2, pos.y + TAM/2
