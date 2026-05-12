@@ -103,6 +103,7 @@
       font-weight: bold;
       color: #00e5ff;
       text-shadow: 0 0 40px #00e5ff;
+      background: rgba(0,0,0,0.85);
     }
 
     /* ===== JOGO ===== */
@@ -113,7 +114,7 @@
       gap: 8px;
     }
 
-    #jogo h1 { color: #00e5ff; font-size: 1.6rem; }
+    #jogo h1 { color: #00e5ff; font-size: 1.4rem; }
 
     #placar { display: flex; gap: 20px; }
 
@@ -147,66 +148,61 @@
 
     /* ===== ARENA ===== */
     #arena {
-      width: 800px;
-      height: 460px;
+      width: 900px;
+      height: 500px;
       position: relative;
       overflow: hidden;
       border: 3px solid #00e5ff;
       box-shadow: 0 0 30px rgba(0,229,255,0.3);
     }
 
-    /* Temas dos mapas */
-    #arena.deserto  { background: linear-gradient(135deg, #c8a050 0%, #a06820 100%); border-color: #ffaa00; }
-    #arena.floresta { background: linear-gradient(135deg, #1a4a1a 0%, #0a2a0a 100%); border-color: #44cc44; }
-    #arena.espacial { background: linear-gradient(135deg, #0a0a2a 0%, #000010 100%); border-color: #aa44ff; }
-    #arena.cidade   { background: linear-gradient(135deg, #2a2a3a 0%, #1a1a2a 100%); border-color: #aaaaaa; }
-    #arena.vulcao   { background: linear-gradient(135deg, #3a0a00 0%, #1a0500 100%); border-color: #ff4400; }
-
-    /* Estrelas no fundo espacial */
-    #arena.espacial::before {
-      content: '✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦';
+    #arena-bg {
       position: absolute;
       width: 100%;
-      color: rgba(255,255,255,0.15);
-      font-size: 1.2rem;
-      letter-spacing: 30px;
-      line-height: 50px;
+      height: 100%;
       top: 0; left: 0;
-      pointer-events: none;
+      z-index: 0;
     }
 
+    /* ===== TANQUES ===== */
     .tanque {
-      width: 60px;
-      height: 60px;
+      width: 48px;
+      height: 48px;
       position: absolute;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
       z-index: 3;
       transition: opacity 0.2s;
+      image-rendering: pixelated;
+    }
+
+    .tanque img {
+      width: 48px;
+      height: 48px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.8));
     }
 
     .tanque.eliminado { display: none; }
 
+    /* ===== TIROS ===== */
     .tiro {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       position: absolute;
       z-index: 5;
     }
 
+    /* ===== OBSTÁCULOS ===== */
     .obstaculo {
       position: absolute;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
       z-index: 2;
-      user-select: none;
+      image-rendering: pixelated;
+    }
+
+    .obstaculo img {
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
     }
 
     /* ===== TELA FINAL ===== */
@@ -232,10 +228,7 @@
       text-shadow: 0 0 30px #00e5ff;
     }
 
-    #nome-mapa {
-      font-size: 1rem;
-      color: #666;
-    }
+    #nome-mapa { font-size: 1rem; color: #666; }
 
     .btns-final { display: flex; gap: 20px; margin-top: 10px; }
 
@@ -260,7 +253,6 @@
   <div id="tela-lobby">
     <h1>⚔️ Batalha do Código ⚔️</h1>
     <p style="color:#aaaaaa;">Grupo ACDC — escaneie o QR Code e entre no jogo!</p>
-
     <div class="lobby-jogadores">
       <div class="slot" id="slot1">
         <div class="slot-icone">🟦</div>
@@ -283,7 +275,6 @@
         <div class="slot-status" id="status-slot4">Vaga aberta</div>
       </div>
     </div>
-
     <button id="btn-iniciar" onclick="iniciarBatalha()">⚔️ INICIAR BATALHA</button>
     <p class="instrucao">Precisa de pelo menos 2 jogadores para iniciar</p>
   </div>
@@ -297,35 +288,40 @@
     <div id="placar">
       <div class="info-tanque" id="info1">
         <span class="nome-tanque" id="nome1">🟦 Azul</span>
-        <div class="barra-vida-container">
-          <div class="barra-vida" id="barra1"></div>
-        </div>
+        <div class="barra-vida-container"><div class="barra-vida" id="barra1"></div></div>
       </div>
       <div class="info-tanque" id="info2">
         <span class="nome-tanque" id="nome2">🟥 Vermelho</span>
-        <div class="barra-vida-container">
-          <div class="barra-vida" id="barra2"></div>
-        </div>
+        <div class="barra-vida-container"><div class="barra-vida" id="barra2"></div></div>
       </div>
       <div class="info-tanque" id="info3">
         <span class="nome-tanque" id="nome3">🟩 Verde</span>
-        <div class="barra-vida-container">
-          <div class="barra-vida" id="barra3"></div>
-        </div>
+        <div class="barra-vida-container"><div class="barra-vida" id="barra3"></div></div>
       </div>
       <div class="info-tanque" id="info4">
         <span class="nome-tanque" id="nome4">🟨 Amarelo</span>
-        <div class="barra-vida-container">
-          <div class="barra-vida" id="barra4"></div>
-        </div>
+        <div class="barra-vida-container"><div class="barra-vida" id="barra4"></div></div>
       </div>
     </div>
 
     <div id="arena">
-      <div class="tanque" id="tanque1" style="left:50px; top:200px;">🟦</div>
-      <div class="tanque" id="tanque2" style="left:690px; top:200px;">🟥</div>
-      <div class="tanque" id="tanque3" style="left:50px; top:340px;">🟩</div>
-      <div class="tanque" id="tanque4" style="left:690px; top:340px;">🟨</div>
+      <canvas id="arena-bg"></canvas>
+      <div class="tanque" id="tanque1" style="left:60px; top:220px;">
+        <img src="https://kenney.nl/assets/topdown-tanks-redux/PNG/Tanks/tankBlue_outline.png"
+             onerror="this.style.display='none'; this.parentNode.textContent='🟦'">
+      </div>
+      <div class="tanque" id="tanque2" style="left:792px; top:220px;">
+        <img src="https://kenney.nl/assets/topdown-tanks-redux/PNG/Tanks/tankRed_outline.png"
+             onerror="this.style.display='none'; this.parentNode.textContent='🟥'">
+      </div>
+      <div class="tanque" id="tanque3" style="left:60px; top:360px;">
+        <img src="https://kenney.nl/assets/topdown-tanks-redux/PNG/Tanks/tankGreen_outline.png"
+             onerror="this.style.display='none'; this.parentNode.textContent='🟩'">
+      </div>
+      <div class="tanque" id="tanque4" style="left:792px; top:360px;">
+        <img src="https://kenney.nl/assets/topdown-tanks-redux/PNG/Tanks/tankSand_outline.png"
+             onerror="this.style.display='none'; this.parentNode.textContent='🟨'">
+      </div>
     </div>
   </div>
 
@@ -358,24 +354,24 @@
       tanque4: document.getElementById('tanque4')
     };
 
-    const posicoes = {
-      tanque1: { x: 50,  y: 200, dir: 'direita' },
-      tanque2: { x: 690, y: 200, dir: 'esquerda' },
-      tanque3: { x: 50,  y: 340, dir: 'direita' },
-      tanque4: { x: 690, y: 340, dir: 'esquerda' }
-    };
-
     const posicoesIniciais = {
-      tanque1: { x: 50,  y: 200, dir: 'direita' },
-      tanque2: { x: 690, y: 200, dir: 'esquerda' },
-      tanque3: { x: 50,  y: 340, dir: 'direita' },
-      tanque4: { x: 690, y: 340, dir: 'esquerda' }
+      tanque1: { x: 60,  y: 220, dir: 0 },
+      tanque2: { x: 792, y: 220, dir: 180 },
+      tanque3: { x: 60,  y: 360, dir: 0 },
+      tanque4: { x: 792, y: 360, dir: 180 }
     };
 
-    const vidas = { tanque1: VIDAS_MAX, tanque2: VIDAS_MAX, tanque3: VIDAS_MAX, tanque4: VIDAS_MAX };
+    const posicoes = {
+      tanque1: { x: 60,  y: 220, dir: 0 },
+      tanque2: { x: 792, y: 220, dir: 180 },
+      tanque3: { x: 60,  y: 360, dir: 0 },
+      tanque4: { x: 792, y: 360, dir: 180 }
+    };
+
+    const vidas     = { tanque1: VIDAS_MAX, tanque2: VIDAS_MAX, tanque3: VIDAS_MAX, tanque4: VIDAS_MAX };
     const eliminado = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
     const cooldowns = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
-    const cores = { tanque1: '#4488ff', tanque2: '#ff4444', tanque3: '#44cc44', tanque4: '#ffaa00' };
+    const cores     = { tanque1: '#4488ff', tanque2: '#ff4444', tanque3: '#44cc44', tanque4: '#ffaa00' };
 
     const nomesMapa = {
       deserto:  '🏜️ Deserto',
@@ -385,23 +381,135 @@
       vulcao:   '🔥 Vulcão'
     };
 
-    // Lobby
-    socket.on('lobby-atualizado', (data) => {
-      jogadores.tanque1 = data.tanque1;
-      jogadores.tanque2 = data.tanque2;
-      jogadores.tanque3 = data.tanque3;
-      jogadores.tanque4 = data.tanque4;
+    // Fundos dos mapas desenhados em canvas
+    function desenharFundo(mapa) {
+      const canvas = document.getElementById('arena-bg');
+      canvas.width  = 900;
+      canvas.height = 500;
+      const ctx = canvas.getContext('2d');
 
-      [1,2,3,4].forEach(i => {
-        const t = 'tanque' + i;
-        const slot = document.getElementById('slot' + i);
+      if (mapa === 'deserto') {
+        const g = ctx.createLinearGradient(0,0,900,500);
+        g.addColorStop(0, '#d4a853');
+        g.addColorStop(1, '#a0722a');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,900,500);
+        // Manchas de areia
+        ctx.fillStyle = 'rgba(255,220,100,0.18)';
+        for (let i=0;i<30;i++) {
+          ctx.beginPath();
+          ctx.ellipse(Math.random()*900, Math.random()*500, 30+Math.random()*60, 10+Math.random()*20, Math.random()*Math.PI, 0, Math.PI*2);
+          ctx.fill();
+        }
+
+      } else if (mapa === 'floresta') {
+        const g = ctx.createLinearGradient(0,0,900,500);
+        g.addColorStop(0, '#1a4a1a');
+        g.addColorStop(1, '#0a2a0a');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,900,500);
+        // Grama
+        ctx.fillStyle = 'rgba(60,180,60,0.12)';
+        for (let i=0;i<40;i++) {
+          ctx.beginPath();
+          ctx.ellipse(Math.random()*900, Math.random()*500, 20+Math.random()*50, 8+Math.random()*15, Math.random()*Math.PI, 0, Math.PI*2);
+          ctx.fill();
+        }
+
+      } else if (mapa === 'espacial') {
+        ctx.fillStyle = '#00000f';
+        ctx.fillRect(0,0,900,500);
+        // Estrelas
+        ctx.fillStyle = 'white';
+        for (let i=0;i<200;i++) {
+          const x = Math.random()*900;
+          const y = Math.random()*500;
+          const r = Math.random()*1.5;
+          ctx.beginPath();
+          ctx.arc(x,y,r,0,Math.PI*2);
+          ctx.fill();
+        }
+        // Nebulosa
+        const gn = ctx.createRadialGradient(450,250,0,450,250,300);
+        gn.addColorStop(0, 'rgba(100,0,180,0.15)');
+        gn.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gn;
+        ctx.fillRect(0,0,900,500);
+
+      } else if (mapa === 'cidade') {
+        ctx.fillStyle = '#1a1a2a';
+        ctx.fillRect(0,0,900,500);
+        // Ruas
+        ctx.fillStyle = '#2a2a3a';
+        ctx.fillRect(0, 230, 900, 40);
+        ctx.fillRect(420, 0, 60, 500);
+        ctx.strokeStyle = '#ffff00';
+        ctx.setLineDash([20,20]);
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0,250); ctx.lineTo(900,250); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(450,0); ctx.lineTo(450,500); ctx.stroke();
+        ctx.setLineDash([]);
+
+      } else if (mapa === 'vulcao') {
+        const g = ctx.createLinearGradient(0,0,900,500);
+        g.addColorStop(0, '#2a0500');
+        g.addColorStop(1, '#1a0000');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,900,500);
+        // Lava
+        ctx.fillStyle = 'rgba(255,60,0,0.12)';
+        for (let i=0;i<20;i++) {
+          ctx.beginPath();
+          ctx.ellipse(Math.random()*900, Math.random()*500, 30+Math.random()*80, 10+Math.random()*20, Math.random()*Math.PI, 0, Math.PI*2);
+          ctx.fill();
+        }
+        // Raios de lava
+        ctx.strokeStyle = 'rgba(255,100,0,0.2)';
+        ctx.lineWidth = 3;
+        for (let i=0;i<8;i++) {
+          ctx.beginPath();
+          ctx.moveTo(Math.random()*900, Math.random()*500);
+          ctx.lineTo(Math.random()*900, Math.random()*500);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Imagens dos obstáculos por mapa
+    const imagensObstaculo = {
+      deserto:  [
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/cactus.png',
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/rock.png',
+      ],
+      floresta: [
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/treeLarge.png',
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/treeSmall.png',
+      ],
+      espacial: [
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/rock.png',
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/rockLarge.png',
+      ],
+      cidade:   [
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/sandbagBeige.png',
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/barrelRed.png',
+      ],
+      vulcao:   [
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/rockLarge.png',
+        'https://kenney.nl/assets/topdown-tanks-redux/PNG/Environment/rock.png',
+      ]
+    };
+
+    socket.on('lobby-atualizado', (data) => {
+      ['tanque1','tanque2','tanque3','tanque4'].forEach((t,i) => {
+        jogadores[t] = data[t];
+        const slot = document.getElementById('slot'+(i+1));
         if (data[t]) {
-          document.getElementById('nome-slot' + i).textContent = data[t];
-          document.getElementById('status-slot' + i).textContent = '✅ Conectado!';
+          document.getElementById('nome-slot'+(i+1)).textContent = data[t];
+          document.getElementById('status-slot'+(i+1)).textContent = '✅ Conectado!';
           slot.classList.add('conectado');
         } else {
-          document.getElementById('nome-slot' + i).textContent = 'Aguardando...';
-          document.getElementById('status-slot' + i).textContent = 'Vaga aberta';
+          document.getElementById('nome-slot'+(i+1)).textContent = 'Aguardando...';
+          document.getElementById('status-slot'+(i+1)).textContent = 'Vaga aberta';
           slot.classList.remove('conectado');
         }
       });
@@ -413,52 +521,62 @@
     });
 
     function iniciarBatalha() {
-      const ativos = Object.values(jogadores).filter(Boolean).length;
-      if (ativos < 2) return;
+      if (Object.values(jogadores).filter(Boolean).length < 2) return;
       socket.emit('iniciar-jogo');
     }
 
     socket.on('jogo-iniciado', (data) => {
       mapaAtual = data.mapa;
       obstaculosAtuais = data.obstaculos;
+      prepararJogo();
       iniciarContagem();
     });
 
-    function iniciarContagem() {
-      [1,2,3,4].forEach(i => {
-        const t = 'tanque' + i;
-        const emoji = ['🟦','🟥','🟩','🟨'][i-1];
+    function prepararJogo() {
+      // Placar
+      const emojis = ['🟦','🟥','🟩','🟨'];
+      ['tanque1','tanque2','tanque3','tanque4'].forEach((t,i) => {
         if (jogadores[t]) {
-          document.getElementById('nome' + i).textContent = emoji + ' ' + jogadores[t];
-          document.getElementById('info' + i).style.display = 'flex';
-          tanques[t].style.display = 'flex';
+          document.getElementById('nome'+(i+1)).textContent = emojis[i]+' '+jogadores[t];
+          document.getElementById('info'+(i+1)).style.display = 'flex';
+          tanques[t].style.display = 'block';
         } else {
-          document.getElementById('info' + i).style.display = 'none';
+          document.getElementById('info'+(i+1)).style.display = 'none';
           tanques[t].style.display = 'none';
         }
       });
 
-      // Aplica tema do mapa
-      const arena = document.getElementById('arena');
-      arena.className = mapaAtual;
+      // Fundo
+      desenharFundo(mapaAtual);
 
-      // Gera obstáculos visuais
+      // Obstáculos
       document.querySelectorAll('.obstaculo').forEach(o => o.remove());
+      const imgs = imagensObstaculo[mapaAtual];
       obstaculosAtuais.forEach(ob => {
         const el = document.createElement('div');
         el.classList.add('obstaculo');
-        el.textContent = ob.tipo;
-        el.style.left = ob.x + 'px';
-        el.style.top  = ob.y + 'px';
-        arena.appendChild(el);
+        el.style.left   = ob.x + 'px';
+        el.style.top    = ob.y + 'px';
+        el.style.width  = ob.w + 'px';
+        el.style.height = ob.h + 'px';
+        const img = document.createElement('img');
+        img.src = imgs[Math.floor(Math.random() * imgs.length)];
+        img.onerror = () => {
+          el.textContent = mapaAtual === 'floresta' ? '🌲' :
+                           mapaAtual === 'deserto'  ? '🌵' :
+                           mapaAtual === 'cidade'   ? '🏢' :
+                           mapaAtual === 'vulcao'   ? '🌋' : '🪨';
+          el.style.fontSize = '2rem';
+        };
+        el.appendChild(img);
+        document.getElementById('arena').appendChild(el);
       });
+    }
 
+    function iniciarContagem() {
       document.getElementById('tela-lobby').style.display = 'none';
-
       const contagem = document.getElementById('contagem');
-      contagem.style.background = 'rgba(0,0,0,0.85)';
       contagem.style.display = 'flex';
-
       let num = 3;
       contagem.textContent = num;
 
@@ -478,47 +596,73 @@
     }
 
     function atualizarVidas(tanque) {
-      const i = tanque.replace('tanque', '');
-      const pct = (vidas[tanque] / VIDAS_MAX) * 100;
-      document.getElementById('barra' + i).style.width = pct + '%';
+      const i = tanque.replace('tanque','');
+      document.getElementById('barra'+i).style.width = (vidas[tanque]/VIDAS_MAX*100)+'%';
     }
 
     function colideObstaculo(nx, ny) {
       return obstaculosAtuais.some(ob =>
-        nx < ob.x + 50 && nx + 60 > ob.x &&
-        ny < ob.y + 50 && ny + 60 > ob.y
+        nx < ob.x + ob.w && nx + 48 > ob.x &&
+        ny < ob.y + ob.h && ny + 48 > ob.y
       );
     }
 
     socket.on('comando', (data) => {
-      if (!jogoAtivo) return;
-      if (eliminado[data.tanque]) return;
-
+      if (!jogoAtivo || eliminado[data.tanque]) return;
       const tanque = tanques[data.tanque];
-      const pos = posicoes[data.tanque];
+      const pos    = posicoes[data.tanque];
       if (!tanque) return;
 
-      if (data.direcao) {
-        pos.dir = data.direcao;
-
+  if (data.dx !== undefined) {
+        const velocidade = 4;
+        const passos = 4; // divide o movimento em passos menores
+        
         let nx = pos.x;
         let ny = pos.y;
+        
+        const stepX = (data.dx * velocidade) / passos;
+        const stepY = (data.dy * velocidade) / passos;
 
-        if (data.direcao === 'cima')     ny -= 10;
-        if (data.direcao === 'baixo')    ny += 10;
-        if (data.direcao === 'esquerda') nx -= 10;
-        if (data.direcao === 'direita')  nx += 10;
+        // Move passo a passo pra evitar travamento
+        for (let i = 0; i < passos; i++) {
+          const tentX = nx + stepX;
+          const tentY = ny + stepY;
 
-        nx = Math.max(0, Math.min(740, nx));
-        ny = Math.max(0, Math.min(400, ny));
+          const tentaX = Math.max(0, Math.min(852, tentX));
+          const tentaY = Math.max(0, Math.min(452, tentY));
 
-        // Só move se não colidir com obstáculo
-        if (!colideObstaculo(nx, ny)) {
-          pos.x = nx;
-          pos.y = ny;
-          tanque.style.left = pos.x + 'px';
-          tanque.style.top  = pos.y + 'px';
+          // Tenta mover nos dois eixos separadamente
+          if (!colideObstaculo(tentaX, ny)) nx = tentaX;
+          if (!colideObstaculo(nx, tentaY)) ny = tentaY;
         }
+
+        pos.x = nx;
+        pos.y = ny;
+
+        // Rotação suave — só atualiza se estiver se movendo
+        if (Math.abs(data.dx) > 0.15 || Math.abs(data.dy) > 0.15) {
+          const angAlvo = Math.atan2(data.dy, data.dx) * 180 / Math.PI;
+
+          // Converte tudo pra radianos pra interpolação correta
+          const radAtual = pos.dir * Math.PI / 180;
+          const radAlvo  = angAlvo  * Math.PI / 180;
+
+          // Interpolação via seno/cosseno — nunca flica
+          const cosAtual = Math.cos(radAtual);
+          const sinAtual = Math.sin(radAtual);
+          const cosAlvo  = Math.cos(radAlvo);
+          const sinAlvo  = Math.sin(radAlvo);
+
+          const fator = 0.25;
+          const cosNovo = cosAtual + (cosAlvo - cosAtual) * fator;
+          const sinNovo = sinAtual + (sinAlvo - sinAtual) * fator;
+
+          pos.dir = Math.atan2(sinNovo, cosNovo) * 180 / Math.PI;
+        }
+
+        tanque.style.left      = pos.x + 'px';
+        tanque.style.top       = pos.y + 'px';
+        tanque.style.transform = `rotate(${pos.dir + 90}deg)`;
       }
 
       if (data.atirar) atirar(data.tanque);
@@ -531,64 +675,38 @@
 
       const pos = posicoes[nomeTanque];
       const cor = cores[nomeTanque];
+      const rad = (pos.dir - 90) * Math.PI / 180;
+      let dx = Math.cos(rad) * 12;
+      let dy = Math.sin(rad) * 12;
 
       const tiro = document.createElement('div');
       tiro.classList.add('tiro');
       tiro.style.backgroundColor = cor;
-      tiro.style.boxShadow = `0 0 6px ${cor}`;
-
-      let tx = pos.x + 25;
-      let ty = pos.y + 25;
+      tiro.style.boxShadow = `0 0 8px ${cor}`;
+      let tx = pos.x + 20;
+      let ty = pos.y + 20;
       tiro.style.left = tx + 'px';
       tiro.style.top  = ty + 'px';
-
       document.getElementById('arena').appendChild(tiro);
 
-      let dx = 0, dy = 0;
-      if (pos.dir === 'direita')  dx = 10;
-      if (pos.dir === 'esquerda') dx = -10;
-      if (pos.dir === 'cima')     dy = -10;
-      if (pos.dir === 'baixo')    dy = 10;
-
       const intervalo = setInterval(() => {
-        tx += dx;
-        ty += dy;
+        tx += dx; ty += dy;
         tiro.style.left = tx + 'px';
         tiro.style.top  = ty + 'px';
 
-        // Colisão com obstáculos
-        const bateObstaculo = obstaculosAtuais.some(ob =>
-          tx > ob.x && tx < ob.x + 50 &&
-          ty > ob.y && ty < ob.y + 50
-        );
+        if (obstaculosAtuais.some(ob =>
+          tx > ob.x && tx < ob.x+ob.w && ty > ob.y && ty < ob.y+ob.h
+        )) { clearInterval(intervalo); tiro.remove(); return; }
 
-        if (bateObstaculo) {
-          clearInterval(intervalo);
-          tiro.remove();
-          return;
-        }
-
-        // Colisão com inimigos
         for (const inimigo in tanques) {
-          if (inimigo === nomeTanque) continue;
-          if (eliminado[inimigo]) continue;
-          if (!jogadores[inimigo]) continue;
-
-          const posInimigo = posicoes[inimigo];
-          if (
-            tx > posInimigo.x && tx < posInimigo.x + 60 &&
-            ty > posInimigo.y && ty < posInimigo.y + 60
-          ) {
-            clearInterval(intervalo);
-            tiro.remove();
+          if (inimigo === nomeTanque || eliminado[inimigo] || !jogadores[inimigo]) continue;
+          const pi = posicoes[inimigo];
+          if (tx > pi.x && tx < pi.x+48 && ty > pi.y && ty < pi.y+48) {
+            clearInterval(intervalo); tiro.remove();
             vidas[inimigo]--;
             atualizarVidas(inimigo);
-
             tanques[inimigo].style.opacity = '0.2';
-            setTimeout(() => {
-              if (!eliminado[inimigo]) tanques[inimigo].style.opacity = '1';
-            }, 400);
-
+            setTimeout(() => { if (!eliminado[inimigo]) tanques[inimigo].style.opacity='1'; }, 400);
             if (vidas[inimigo] <= 0) {
               eliminado[inimigo] = true;
               tanques[inimigo].classList.add('eliminado');
@@ -599,61 +717,54 @@
           }
         }
 
-        if (tx < 0 || tx > 800 || ty < 0 || ty > 460) {
-          clearInterval(intervalo);
-          tiro.remove();
-        }
-      }, 20);
+        if (tx<0||tx>900||ty<0||ty>500) { clearInterval(intervalo); tiro.remove(); }
+      }, 16);
     }
 
     function verificarVencedor() {
       const vivos = Object.keys(eliminado).filter(t => !eliminado[t] && jogadores[t]);
       if (vivos.length === 1) {
         jogoAtivo = false;
-        const vencedor = vivos[0];
-        const emoji = { tanque1:'🟦', tanque2:'🟥', tanque3:'🟩', tanque4:'🟨' };
-        document.getElementById('nome-vencedor').textContent = emoji[vencedor] + ' ' + jogadores[vencedor];
-        document.getElementById('nome-mapa').textContent = 'Mapa: ' + nomesMapa[mapaAtual];
-        setTimeout(() => {
-          document.getElementById('tela-final').style.display = 'flex';
-        }, 1000);
+        const v = vivos[0];
+        const emoji = {tanque1:'🟦',tanque2:'🟥',tanque3:'🟩',tanque4:'🟨'};
+        document.getElementById('nome-vencedor').textContent = emoji[v]+' '+jogadores[v];
+        document.getElementById('nome-mapa').textContent = 'Mapa: '+nomesMapa[mapaAtual];
+        setTimeout(() => { document.getElementById('tela-final').style.display='flex'; }, 1000);
       }
     }
 
-    function revanche() { socket.emit('revanche'); }
+    function resetarJogo() {
+      jogoAtivo = false;
+      for (const t in vidas)     vidas[t]     = VIDAS_MAX;
+      for (const t in eliminado) eliminado[t] = false;
+      for (const t in cooldowns) cooldowns[t] = false;
+      for (const t in posicoes) {
+        posicoes[t].x   = posicoesIniciais[t].x;
+        posicoes[t].y   = posicoesIniciais[t].y;
+        posicoes[t].dir = posicoesIniciais[t].dir;
+        tanques[t].classList.remove('eliminado');
+        tanques[t].style.opacity   = '1';
+        tanques[t].style.transform = '';
+        tanques[t].style.left      = posicoes[t].x+'px';
+        tanques[t].style.top       = posicoes[t].y+'px';
+      }
+      for (let i=1;i<=4;i++) document.getElementById('barra'+i).style.width='100%';
+      document.getElementById('tela-final').style.display='none';
+      document.getElementById('jogo').style.display='none';
+    }
+
+    function revanche()    { socket.emit('revanche'); }
     function novaPartida() { socket.emit('nova-partida'); }
 
     socket.on('revanche', (data) => {
-      jogoAtivo = false;
       mapaAtual = data.mapa;
       obstaculosAtuais = data.obstaculos;
-
-      for (const t in vidas) { vidas[t] = VIDAS_MAX; }
-      for (const t in eliminado) { eliminado[t] = false; }
-      for (const t in cooldowns) { cooldowns[t] = false; }
-
-      for (const t in posicoes) {
-        posicoes[t].x = posicoesIniciais[t].x;
-        posicoes[t].y = posicoesIniciais[t].y;
-        posicoes[t].dir = posicoesIniciais[t].dir;
-        tanques[t].classList.remove('eliminado');
-        tanques[t].style.opacity = '1';
-        tanques[t].style.left = posicoes[t].x + 'px';
-        tanques[t].style.top  = posicoes[t].y + 'px';
-      }
-
-      [1,2,3,4].forEach(i => {
-        document.getElementById('barra' + i).style.width = '100%';
-      });
-
-      document.getElementById('tela-final').style.display = 'none';
-      document.getElementById('jogo').style.display = 'none';
-
+      resetarJogo();
+      prepararJogo();
       iniciarContagem();
     });
 
     socket.on('nova-partida', () => { location.reload(); });
   </script>
-
 </body>
 </html>
