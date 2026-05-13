@@ -352,6 +352,11 @@
 
     socket.on('revanche', () => {
       mostrar('tela-revanche');
+      setTimeout(() => {
+        mostrar('tela-controles');
+        const div = document.getElementById('tanque-escolhido');
+        div.innerHTML = '<img src="' + fotosTanque[tanqueEscolhido] + '" alt="voce"> ' + apelidoJogador;
+      }, 4000);
     });
 
     socket.on('nova-partida', () => { location.reload(); });
