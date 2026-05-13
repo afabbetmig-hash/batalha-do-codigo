@@ -24,7 +24,7 @@ const mapas = ['deserto', 'floresta', 'espacial', 'cidade', 'vulcao'];
 
 function gerarObstaculos(mapa) {
   const obstaculos = [];
-  const quantidade = 8 + Math.floor(Math.random() * 5); // 8 a 12 obstáculos
+  const quantidade = 12 + Math.floor(Math.random() * 6); // 12 a 17 obstáculos
 
   const tiposObstaculo = {
     deserto:  ['🪨', '🌵', '🪨'],
@@ -36,31 +36,32 @@ function gerarObstaculos(mapa) {
 
   const tipos = tiposObstaculo[mapa];
 
-  // Posições proibidas (onde os tanques começam)
+  // Posições proibidas (onde os tanques começam) — arena 1400x700
   const proibidas = [
-    { x: 50, y: 200 }, { x: 690, y: 200 },
-    { x: 50, y: 340 }, { x: 690, y: 340 }
+    { x: 60,   y: 300 },
+    { x: 1292, y: 300 },
+    { x: 60,   y: 500 },
+    { x: 1292, y: 500 }
   ];
 
   let tentativas = 0;
-  while (obstaculos.length < quantidade && tentativas < 200) {
+  while (obstaculos.length < quantidade && tentativas < 300) {
     tentativas++;
-    const x = 60 + Math.floor(Math.random() * 640);
-    const y = 60 + Math.floor(Math.random() * 340);
+    const x = 80 + Math.floor(Math.random() * 1200);
+    const y = 80 + Math.floor(Math.random() * 540);
 
-    // Verifica se não está em cima de um tanque
     const colideTanque = proibidas.some(p =>
-      Math.abs(p.x - x) < 80 && Math.abs(p.y - y) < 80
+      Math.abs(p.x - x) < 120 && Math.abs(p.y - y) < 120
     );
 
-    // Verifica se não está em cima de outro obstáculo
     const colideObstaculo = obstaculos.some(o =>
-      Math.abs(o.x - x) < 60 && Math.abs(o.y - y) < 60
+      Math.abs(o.x - x) < 80 && Math.abs(o.y - y) < 80
     );
 
     if (!colideTanque && !colideObstaculo) {
       obstaculos.push({
         x, y,
+        w: 48, h: 48,
         tipo: tipos[Math.floor(Math.random() * tipos.length)]
       });
     }
@@ -69,8 +70,25 @@ function gerarObstaculos(mapa) {
   return obstaculos;
 }
 
+// Power-ups
+function gerarPowerUps() {
+  const tipos = ['vida', 'rapido', 'escudo'];
+  const powerups = [];
+  for (let i = 0; i < 3; i++) {
+    powerups.push({
+      id: i,
+      tipo: tipos[i],
+      x: 300 + Math.floor(Math.random() * 800),
+      y: 150 + Math.floor(Math.random() * 400),
+      ativo: true
+    });
+  }
+  return powerups;
+}
+
 let mapaAtual = null;
 let obstaculosAtuais = [];
+let powerUpsAtuais = [];
 
 io.on('connection', (socket) => {
   console.log('Alguém conectou!');
@@ -97,18 +115,19 @@ io.on('connection', (socket) => {
   });
 
   socket.on('iniciar-jogo', () => {
-    // Sorteia mapa e gera obstáculos
     mapaAtual = mapas[Math.floor(Math.random() * mapas.length)];
     obstaculosAtuais = gerarObstaculos(mapaAtual);
+    powerUpsAtuais = gerarPowerUps();
 
     console.log(`Jogo iniciado! Mapa: ${mapaAtual}`);
-    io.emit('jogo-iniciado', { mapa: mapaAtual, obstaculos: obstaculosAtuais });
+    io.emit('jogo-iniciado', { mapa: mapaAtual, obstaculos: obstaculosAtuais, powerups: powerUpsAtuais });
   });
 
   socket.on('revanche', () => {
     mapaAtual = mapas[Math.floor(Math.random() * mapas.length)];
     obstaculosAtuais = gerarObstaculos(mapaAtual);
-    io.emit('revanche', { lobby, mapa: mapaAtual, obstaculos: obstaculosAtuais });
+    powerUpsAtuais = gerarPowerUps();
+    io.emit('revanche', { lobby, mapa: mapaAtual, obstaculos: obstaculosAtuais, powerups: powerUpsAtuais });
   });
 
   socket.on('nova-partida', () => {
@@ -117,6 +136,14 @@ io.on('connection', (socket) => {
     lobby.tanque3 = null;
     lobby.tanque4 = null;
     io.emit('nova-partida');
+  });
+
+  socket.on('powerup-coletado', (data) => {
+    io.emit('powerup-coletado', data);
+  });
+
+  socket.on('jogador-eliminado', (tanque) => {
+    io.emit('jogador-eliminado', tanque);
   });
 
   socket.on('comando', (data) => {

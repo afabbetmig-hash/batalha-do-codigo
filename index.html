@@ -10,12 +10,14 @@
       color: white;
       font-family: Arial, sans-serif;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
       height: 100vh;
       overflow: hidden;
     }
+
+    /* ===== LOBBY ===== */
     #tela-lobby {
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 25px; position: absolute;
@@ -29,7 +31,11 @@
       border: 2px solid #333; background-color: #111133; transition: all 0.3s;
     }
     .slot.conectado { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0,229,255,0.3); }
-    .slot-icone { font-size: 2.5rem; }
+    .slot-foto {
+      width: 70px; height: 70px; border-radius: 50%; object-fit: cover;
+      border: 3px solid #333; transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .slot.conectado .slot-foto { border-color: #00e5ff; box-shadow: 0 0 10px rgba(0,229,255,0.5); }
     .slot-nome { font-size: 1rem; font-weight: bold; color: #aaaaaa; text-align: center; }
     .slot.conectado .slot-nome { color: white; }
     .slot-status { font-size: 0.8rem; color: #555; }
@@ -45,32 +51,70 @@
     }
     #btn-iniciar.pronto:hover { transform: scale(1.05); }
     .instrucao { font-size: 0.9rem; color: #666; text-align: center; }
+
+    /* ===== CONTAGEM ===== */
     #contagem {
       display: none; position: absolute; width: 100%; height: 100%; z-index: 9;
       align-items: center; justify-content: center; font-size: 10rem;
       font-weight: bold; color: #00e5ff; text-shadow: 0 0 40px #00e5ff;
       background: rgba(0,0,0,0.85);
     }
-    #jogo { display: none; flex-direction: column; align-items: center; gap: 8px; }
-    #jogo h1 { color: #00e5ff; font-size: 1.4rem; }
-    #placar { display: flex; gap: 20px; }
-    .info-tanque { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .nome-tanque { font-size: 0.85rem; font-weight: bold; }
+
+    /* ===== JOGO ===== */
+    #jogo {
+      display: none; flex-direction: row; align-items: flex-start;
+      gap: 0; width: 100%; height: 100vh;
+    }
+
+    /* ===== PLACAR LATERAL ===== */
+    #placar-lateral {
+      width: 180px; min-width: 180px; height: 100vh;
+      background: #0d0d22; border-right: 2px solid #00e5ff;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 15px 10px; gap: 15px;
+      box-shadow: 4px 0 20px rgba(0,229,255,0.15);
+    }
+    #placar-lateral h2 {
+      color: #00e5ff; font-size: 1rem; text-align: center;
+      text-shadow: 0 0 10px #00e5ff; letter-spacing: 1px;
+    }
+    .info-tanque {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px; width: 100%; padding: 10px 8px;
+      border-radius: 12px; background: #111133;
+      border: 1px solid #222; transition: all 0.3s;
+    }
+    .info-tanque.eliminado-placar { opacity: 0.35; filter: grayscale(1); }
+    .info-topo { display: flex; align-items: center; gap: 8px; width: 100%; }
+    .foto-placar {
+      width: 38px; height: 38px; border-radius: 50%; object-fit: cover;
+      border: 2px solid #555; flex-shrink: 0;
+    }
+    .nome-tanque { font-size: 0.8rem; font-weight: bold; flex: 1; }
     #nome1 { color: #4488ff; } #nome2 { color: #ff4444; }
     #nome3 { color: #44cc44; } #nome4 { color: #ffaa00; }
     .barra-vida-container {
-      width: 130px; height: 14px; background-color: #333;
-      border-radius: 10px; overflow: hidden; border: 2px solid #555;
+      width: 100%; height: 12px; background-color: #333;
+      border-radius: 10px; overflow: hidden; border: 1px solid #444;
     }
     .barra-vida { height: 100%; border-radius: 10px; transition: width 0.3s; }
     #barra1 { background-color: #4488ff; width: 100%; }
     #barra2 { background-color: #ff4444; width: 100%; }
     #barra3 { background-color: #44cc44; width: 100%; }
     #barra4 { background-color: #ffaa00; width: 100%; }
+    .vidas-num { font-size: 0.7rem; color: #888; }
+    .status-escudo { font-size: 0.75rem; color: #00e5ff; display: none; }
+
+    /* ===== ARENA ===== */
+    #arena-wrapper {
+      flex: 1; height: 100vh; display: flex;
+      align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
     #arena {
-      width: 900px; height: 500px; position: relative;
+      width: 800px; height: 650px; position: relative;
       overflow: hidden; border: 3px solid #00e5ff;
-      box-shadow: 0 0 30px rgba(0,229,255,0.3);
+      box-shadow: 0 0 40px rgba(0,229,255,0.3);
     }
     #arena-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; }
     .tanque { width: 48px; height: 48px; position: absolute; z-index: 3; transition: opacity 0.2s; }
@@ -78,8 +122,38 @@
     .tiro { width: 8px; height: 8px; border-radius: 50%; position: absolute; z-index: 5; }
     .obstaculo {
       position: absolute; z-index: 2; display: flex;
-      align-items: center; justify-content: center; font-size: 2rem;
+      align-items: center; justify-content: center; font-size: 2.2rem;
+      width: 48px; height: 48px;
     }
+
+    /* ===== POWER-UPS ===== */
+    .powerup {
+      position: absolute; z-index: 4; width: 36px; height: 36px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; animation: pulsePowerup 1.2s ease-in-out infinite;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    .powerup.vida    { background: rgba(255,50,50,0.8); }
+    .powerup.rapido  { background: rgba(255,200,0,0.8); }
+    .powerup.escudo  { background: rgba(0,150,255,0.8); }
+    @keyframes pulsePowerup {
+      0%,100% { transform: scale(1); box-shadow: 0 0 8px rgba(255,255,255,0.4); }
+      50%      { transform: scale(1.15); box-shadow: 0 0 18px rgba(255,255,255,0.7); }
+    }
+
+    /* ===== EXPLOSÃO ===== */
+    .explosao {
+      position: absolute; z-index: 10; pointer-events: none;
+      font-size: 3.5rem; animation: explodir 0.6s ease-out forwards;
+      transform-origin: center;
+    }
+    @keyframes explodir {
+      0%   { transform: scale(0.3); opacity: 1; }
+      50%  { transform: scale(1.4); opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    /* ===== TELA FINAL ===== */
     #tela-final {
       display: none; position: absolute; width: 100%; height: 100%;
       background-color: rgba(0,0,0,0.92); z-index: 20;
@@ -97,38 +171,95 @@
 </head>
 <body>
 
+  <!-- LOBBY -->
   <div id="tela-lobby">
     <h1>⚔️ Batalha do Código ⚔️</h1>
     <p style="color:#aaaaaa;">Grupo ACDC — escaneie o QR Code e entre no jogo!</p>
     <div class="lobby-jogadores">
-      <div class="slot" id="slot1"><div class="slot-icone">🟦</div><div class="slot-nome" id="nome-slot1">Aguardando...</div><div class="slot-status" id="status-slot1">Vaga aberta</div></div>
-      <div class="slot" id="slot2"><div class="slot-icone">🟥</div><div class="slot-nome" id="nome-slot2">Aguardando...</div><div class="slot-status" id="status-slot2">Vaga aberta</div></div>
-      <div class="slot" id="slot3"><div class="slot-icone">🟩</div><div class="slot-nome" id="nome-slot3">Aguardando...</div><div class="slot-status" id="status-slot3">Vaga aberta</div></div>
-      <div class="slot" id="slot4"><div class="slot-icone">🟨</div><div class="slot-nome" id="nome-slot4">Aguardando...</div><div class="slot-status" id="status-slot4">Vaga aberta</div></div>
+      <div class="slot" id="slot1">
+        <img src="/foto1.jpeg" class="slot-foto">
+        <div class="slot-nome" id="nome-slot1">Aguardando...</div>
+        <div class="slot-status" id="status-slot1">Vaga aberta</div>
+      </div>
+      <div class="slot" id="slot2">
+        <img src="/foto2.jpeg" class="slot-foto">
+        <div class="slot-nome" id="nome-slot2">Aguardando...</div>
+        <div class="slot-status" id="status-slot2">Vaga aberta</div>
+      </div>
+      <div class="slot" id="slot3">
+        <img src="/foto3.jpeg" class="slot-foto">
+        <div class="slot-nome" id="nome-slot3">Aguardando...</div>
+        <div class="slot-status" id="status-slot3">Vaga aberta</div>
+      </div>
+      <div class="slot" id="slot4">
+        <img src="/foto4.jpeg" class="slot-foto">
+        <div class="slot-nome" id="nome-slot4">Aguardando...</div>
+        <div class="slot-status" id="status-slot4">Vaga aberta</div>
+      </div>
     </div>
     <button id="btn-iniciar" onclick="iniciarBatalha()">⚔️ INICIAR BATALHA</button>
     <p class="instrucao">Precisa de pelo menos 2 jogadores para iniciar</p>
   </div>
 
+  <!-- CONTAGEM -->
   <div id="contagem">3</div>
 
+  <!-- JOGO -->
   <div id="jogo">
-    <h1>⚔️ Batalha do Código ⚔️</h1>
-    <div id="placar">
-      <div class="info-tanque" id="info1"><span class="nome-tanque" id="nome1">🟦 Azul</span><div class="barra-vida-container"><div class="barra-vida" id="barra1"></div></div></div>
-      <div class="info-tanque" id="info2"><span class="nome-tanque" id="nome2">🟥 Vermelho</span><div class="barra-vida-container"><div class="barra-vida" id="barra2"></div></div></div>
-      <div class="info-tanque" id="info3"><span class="nome-tanque" id="nome3">🟩 Verde</span><div class="barra-vida-container"><div class="barra-vida" id="barra3"></div></div></div>
-      <div class="info-tanque" id="info4"><span class="nome-tanque" id="nome4">🟨 Amarelo</span><div class="barra-vida-container"><div class="barra-vida" id="barra4"></div></div></div>
+    <!-- PLACAR LATERAL ESQUERDO -->
+    <div id="placar-lateral">
+      <h2>⚔️ BATALHA ⚔️</h2>
+      <div class="info-tanque" id="info1">
+        <div class="info-topo">
+          <img src="/foto1.jpeg" class="foto-placar">
+          <span class="nome-tanque" id="nome1">Azul</span>
+        </div>
+        <div class="barra-vida-container"><div class="barra-vida" id="barra1"></div></div>
+        <div class="vidas-num" id="vidas-num1">❤️ 8/8</div>
+        <div class="status-escudo" id="escudo1">🛡️ Escudo ativo!</div>
+      </div>
+      <div class="info-tanque" id="info2">
+        <div class="info-topo">
+          <img src="/foto2.jpeg" class="foto-placar">
+          <span class="nome-tanque" id="nome2">Vermelho</span>
+        </div>
+        <div class="barra-vida-container"><div class="barra-vida" id="barra2"></div></div>
+        <div class="vidas-num" id="vidas-num2">❤️ 8/8</div>
+        <div class="status-escudo" id="escudo2">🛡️ Escudo ativo!</div>
+      </div>
+      <div class="info-tanque" id="info3">
+        <div class="info-topo">
+          <img src="/foto3.jpeg" class="foto-placar">
+          <span class="nome-tanque" id="nome3">Verde</span>
+        </div>
+        <div class="barra-vida-container"><div class="barra-vida" id="barra3"></div></div>
+        <div class="vidas-num" id="vidas-num3">❤️ 8/8</div>
+        <div class="status-escudo" id="escudo3">🛡️ Escudo ativo!</div>
+      </div>
+      <div class="info-tanque" id="info4">
+        <div class="info-topo">
+          <img src="/foto4.jpeg" class="foto-placar">
+          <span class="nome-tanque" id="nome4">Amarelo</span>
+        </div>
+        <div class="barra-vida-container"><div class="barra-vida" id="barra4"></div></div>
+        <div class="vidas-num" id="vidas-num4">❤️ 8/8</div>
+        <div class="status-escudo" id="escudo4">🛡️ Escudo ativo!</div>
+      </div>
     </div>
-    <div id="arena">
-      <canvas id="arena-bg"></canvas>
-      <canvas class="tanque" id="tanque1" width="48" height="48" style="left:60px; top:220px;"></canvas>
-      <canvas class="tanque" id="tanque2" width="48" height="48" style="left:792px; top:220px;"></canvas>
-      <canvas class="tanque" id="tanque3" width="48" height="48" style="left:60px; top:360px;"></canvas>
-      <canvas class="tanque" id="tanque4" width="48" height="48" style="left:792px; top:360px;"></canvas>
+
+    <!-- ARENA -->
+    <div id="arena-wrapper">
+      <div id="arena">
+        <canvas id="arena-bg"></canvas>
+        <canvas class="tanque" id="tanque1" width="48" height="48" style="left:30px; top:30px;"></canvas>
+        <canvas class="tanque" id="tanque2" width="48" height="48" style="left:742px; top:30px;"></canvas>
+        <canvas class="tanque" id="tanque3" width="48" height="48" style="left:30px; top:572px;"></canvas>
+        <canvas class="tanque" id="tanque4" width="48" height="48" style="left:742px; top:572px;"></canvas>
+      </div>
     </div>
   </div>
 
+  <!-- TELA FINAL -->
   <div id="tela-final">
     <div style="font-size:4rem;">🏆</div>
     <h2>VENCEDOR</h2>
@@ -145,23 +276,85 @@
     const socket = io();
     let jogoAtivo = false;
     const VIDAS_MAX = 8;
-    const TAM = 48;
-    const R   = 16;
+    const TAM  = 48;
+    const R    = 16;
     const CANO = 14;
+    const ARENA_W = 800;
+    const ARENA_H = 650;
 
     const jogadores = { tanque1: null, tanque2: null, tanque3: null, tanque4: null };
     let obstaculosAtuais = [];
+    let powerUpsAtuais   = [];
     let mapaAtual = '';
     let bonecoLoop = null;
+
+    // Escudos e velocidades especiais
+    const escudos   = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
+    const velExtra  = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
+
+    // Sons via AudioContext
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function tocarSomTiro(cor) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.12);
+    }
+
+    function tocarSomHit() {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function tocarSomExplosao() {
+      const bufferSize = audioCtx.sampleRate * 0.5;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1);
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+      source.connect(gain); gain.connect(audioCtx.destination);
+      source.start(); source.stop(audioCtx.currentTime + 0.5);
+    }
+
+    function tocarSomPowerup() {
+      [523, 659, 784].forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const t = audioCtx.currentTime + i * 0.1;
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        osc.start(t); osc.stop(t + 0.15);
+      });
+    }
 
     const fotos = {
       tanque1: new Image(), tanque2: new Image(),
       tanque3: new Image(), tanque4: new Image()
     };
-    fotos.tanque1.src = '/foto1.jpg';
-    fotos.tanque2.src = '/foto2.jpg';
-    fotos.tanque3.src = '/foto3.jpg';
-    fotos.tanque4.src = '/foto4.jpg';
+    fotos.tanque1.src = '/foto1.jpeg';
+    fotos.tanque2.src = '/foto2.jpeg';
+    fotos.tanque3.src = '/foto3.jpeg';
+    fotos.tanque4.src = '/foto4.jpeg';
 
     const tanques = {
       tanque1: document.getElementById('tanque1'),
@@ -171,17 +364,17 @@
     };
 
     const posicoesIniciais = {
-      tanque1: { x: 60,  y: 220, dir: 0 },
-      tanque2: { x: 792, y: 220, dir: 180 },
-      tanque3: { x: 60,  y: 360, dir: 0 },
-      tanque4: { x: 792, y: 360, dir: 180 }
+      tanque1: { x: 30,  y: 30,  dir: 0   },
+      tanque2: { x: 742, y: 30,  dir: 180 },
+      tanque3: { x: 30,  y: 572, dir: 0   },
+      tanque4: { x: 742, y: 572, dir: 180 }
     };
 
     const posicoes = {
-      tanque1: { x: 60,  y: 220, dir: 0 },
-      tanque2: { x: 792, y: 220, dir: 180 },
-      tanque3: { x: 60,  y: 360, dir: 0 },
-      tanque4: { x: 792, y: 360, dir: 180 }
+      tanque1: { x: 30,  y: 30,  dir: 0   },
+      tanque2: { x: 742, y: 30,  dir: 180 },
+      tanque3: { x: 30,  y: 572, dir: 0   },
+      tanque4: { x: 742, y: 572, dir: 180 }
     };
 
     const vidas     = { tanque1: VIDAS_MAX, tanque2: VIDAS_MAX, tanque3: VIDAS_MAX, tanque4: VIDAS_MAX };
@@ -198,28 +391,23 @@
     };
 
     // ===== DESENHAR BONECO =====
-    // O canvas NÃO é rotacionado internamente.
-    // A rotação é feita via CSS: rotate(pos.dir + 90)
-    // Dentro do canvas: cano aponta para CIMA (cy - R - CANO), bola no centro (cx, cy)
-    // pos.dir = ângulo do joystick em graus, onde:
-    //   0   = direita
-    //   90  = baixo
-    //   180 = esquerda
-    //   -90 = cima
-    // CSS rotate(pos.dir + 90) faz o cano (que aponta pra cima no canvas)
-    // apontar na direção pos.dir do joystick.
-    // Logo: ângulo real do cano no mundo = pos.dir graus (sistema CSS, Y pra baixo)
-    // Em Math.cos/sin: rad = pos.dir * PI/180
-
     function desenharBoneco(nomeTanque) {
       const canvas = tanques[nomeTanque];
       if (!canvas || !(canvas instanceof HTMLCanvasElement)) return;
       const ctx = canvas.getContext('2d');
       const cor = cores[nomeTanque];
-      const cx = TAM / 2;
-      const cy = TAM / 2;
+      const cx = TAM / 2, cy = TAM / 2;
 
       ctx.clearRect(0, 0, TAM, TAM);
+
+      // Escudo visual
+      if (escudos[nomeTanque]) {
+        ctx.strokeStyle = 'rgba(0,200,255,0.6)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(cx, cy, R + 5, 0, Math.PI * 2);
+        ctx.stroke();
+      }
 
       // Cano aponta pra cima no canvas
       ctx.fillStyle = '#333';
@@ -234,8 +422,8 @@
       ctx.clip();
       const foto = fotos[nomeTanque];
       if (foto.complete && foto.naturalWidth > 0) {
-        const s  = Math.min(foto.naturalWidth, foto.naturalHeight);
-        const sx = (foto.naturalWidth  - s) / 2;
+        const s = Math.min(foto.naturalWidth, foto.naturalHeight);
+        const sx = (foto.naturalWidth - s) / 2;
         const sy = (foto.naturalHeight - s) / 2;
         ctx.drawImage(foto, sx, sy, s, s, cx - R, cy - R, R * 2, R * 2);
       } else {
@@ -261,42 +449,116 @@
     // ===== FUNDO =====
     function desenharFundo(mapa) {
       const canvas = document.getElementById('arena-bg');
-      canvas.width = 900; canvas.height = 500;
+      canvas.width = ARENA_W; canvas.height = ARENA_H;
       const ctx = canvas.getContext('2d');
       if (mapa === 'deserto') {
-        const g = ctx.createLinearGradient(0,0,900,500);
+        const g = ctx.createLinearGradient(0,0,ARENA_W,ARENA_H);
         g.addColorStop(0,'#d4a853'); g.addColorStop(1,'#a0722a');
-        ctx.fillStyle = g; ctx.fillRect(0,0,900,500);
+        ctx.fillStyle = g; ctx.fillRect(0,0,ARENA_W,ARENA_H);
         ctx.fillStyle = 'rgba(255,220,100,0.18)';
-        for(let i=0;i<30;i++){ctx.beginPath();ctx.ellipse(Math.random()*900,Math.random()*500,30+Math.random()*60,10+Math.random()*20,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
+        for(let i=0;i<50;i++){ctx.beginPath();ctx.ellipse(Math.random()*ARENA_W,Math.random()*ARENA_H,30+Math.random()*80,10+Math.random()*25,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
       } else if (mapa === 'floresta') {
-        const g = ctx.createLinearGradient(0,0,900,500);
+        const g = ctx.createLinearGradient(0,0,ARENA_W,ARENA_H);
         g.addColorStop(0,'#1a4a1a'); g.addColorStop(1,'#0a2a0a');
-        ctx.fillStyle = g; ctx.fillRect(0,0,900,500);
+        ctx.fillStyle = g; ctx.fillRect(0,0,ARENA_W,ARENA_H);
         ctx.fillStyle = 'rgba(60,180,60,0.12)';
-        for(let i=0;i<40;i++){ctx.beginPath();ctx.ellipse(Math.random()*900,Math.random()*500,20+Math.random()*50,8+Math.random()*15,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
+        for(let i=0;i<60;i++){ctx.beginPath();ctx.ellipse(Math.random()*ARENA_W,Math.random()*ARENA_H,20+Math.random()*60,8+Math.random()*20,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
       } else if (mapa === 'espacial') {
-        ctx.fillStyle='#00000f'; ctx.fillRect(0,0,900,500);
+        ctx.fillStyle='#00000f'; ctx.fillRect(0,0,ARENA_W,ARENA_H);
         ctx.fillStyle='white';
-        for(let i=0;i<200;i++){ctx.beginPath();ctx.arc(Math.random()*900,Math.random()*500,Math.random()*1.5,0,Math.PI*2);ctx.fill();}
-        const gn=ctx.createRadialGradient(450,250,0,450,250,300);
+        for(let i=0;i<350;i++){ctx.beginPath();ctx.arc(Math.random()*ARENA_W,Math.random()*ARENA_H,Math.random()*1.8,0,Math.PI*2);ctx.fill();}
+        const gn=ctx.createRadialGradient(ARENA_W/2,ARENA_H/2,0,ARENA_W/2,ARENA_H/2,400);
         gn.addColorStop(0,'rgba(100,0,180,0.15)'); gn.addColorStop(1,'rgba(0,0,0,0)');
-        ctx.fillStyle=gn; ctx.fillRect(0,0,900,500);
+        ctx.fillStyle=gn; ctx.fillRect(0,0,ARENA_W,ARENA_H);
       } else if (mapa === 'cidade') {
-        ctx.fillStyle='#1a1a2a'; ctx.fillRect(0,0,900,500);
-        ctx.fillStyle='#2a2a3a'; ctx.fillRect(0,230,900,40); ctx.fillRect(420,0,60,500);
+        ctx.fillStyle='#1a1a2a'; ctx.fillRect(0,0,ARENA_W,ARENA_H);
+        ctx.fillStyle='#2a2a3a';
+        ctx.fillRect(0,320,ARENA_W,60);
+        ctx.fillRect(650,0,60,ARENA_H);
         ctx.strokeStyle='#ffff00'; ctx.setLineDash([20,20]); ctx.lineWidth=2;
-        ctx.beginPath();ctx.moveTo(0,250);ctx.lineTo(900,250);ctx.stroke();
-        ctx.beginPath();ctx.moveTo(450,0);ctx.lineTo(450,500);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(0,350);ctx.lineTo(ARENA_W,350);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(680,0);ctx.lineTo(680,ARENA_H);ctx.stroke();
         ctx.setLineDash([]);
       } else if (mapa === 'vulcao') {
-        const g=ctx.createLinearGradient(0,0,900,500);
+        const g=ctx.createLinearGradient(0,0,ARENA_W,ARENA_H);
         g.addColorStop(0,'#2a0500'); g.addColorStop(1,'#1a0000');
-        ctx.fillStyle=g; ctx.fillRect(0,0,900,500);
+        ctx.fillStyle=g; ctx.fillRect(0,0,ARENA_W,ARENA_H);
         ctx.fillStyle='rgba(255,60,0,0.12)';
-        for(let i=0;i<20;i++){ctx.beginPath();ctx.ellipse(Math.random()*900,Math.random()*500,30+Math.random()*80,10+Math.random()*20,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
+        for(let i=0;i<35;i++){ctx.beginPath();ctx.ellipse(Math.random()*ARENA_W,Math.random()*ARENA_H,30+Math.random()*100,10+Math.random()*25,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
       }
     }
+
+    // ===== EXPLOSÃO =====
+    function criarExplosao(x, y) {
+      tocarSomExplosao();
+      const arena = document.getElementById('arena');
+      const el = document.createElement('div');
+      el.classList.add('explosao');
+      el.textContent = '💥';
+      el.style.left = (x - 24) + 'px';
+      el.style.top  = (y - 24) + 'px';
+      arena.appendChild(el);
+      setTimeout(() => el.remove(), 700);
+    }
+
+    // ===== POWER-UPS =====
+    function renderizarPowerUps() {
+      document.querySelectorAll('.powerup').forEach(e => e.remove());
+      const arena = document.getElementById('arena');
+      const emojis = { vida: '❤️', rapido: '⚡', escudo: '🛡️' };
+      powerUpsAtuais.forEach(pu => {
+        if (!pu.ativo) return;
+        const el = document.createElement('div');
+        el.classList.add('powerup', pu.tipo);
+        el.dataset.id = pu.id;
+        el.style.left = pu.x + 'px';
+        el.style.top  = pu.y + 'px';
+        el.textContent = emojis[pu.tipo];
+        arena.appendChild(el);
+      });
+    }
+
+    function checarPowerUps(nomeTanque) {
+      const pos = posicoes[nomeTanque];
+      const cx = pos.x + TAM/2, cy = pos.y + TAM/2;
+      powerUpsAtuais.forEach(pu => {
+        if (!pu.ativo) return;
+        const dx = cx - (pu.x + 18);
+        const dy = cy - (pu.y + 18);
+        if (Math.sqrt(dx*dx+dy*dy) < 36) {
+          pu.ativo = false;
+          socket.emit('powerup-coletado', { id: pu.id, tanque: nomeTanque, tipo: pu.tipo });
+          aplicarPowerUp(nomeTanque, pu.tipo);
+          document.querySelector(`.powerup[data-id="${pu.id}"]`)?.remove();
+        }
+      });
+    }
+
+    function aplicarPowerUp(nomeTanque, tipo) {
+      tocarSomPowerup();
+      const i = nomeTanque.replace('tanque','');
+      if (tipo === 'vida') {
+        vidas[nomeTanque] = Math.min(VIDAS_MAX, vidas[nomeTanque] + 3);
+        atualizarVidas(nomeTanque);
+      } else if (tipo === 'rapido') {
+        velExtra[nomeTanque] = true;
+        setTimeout(() => { velExtra[nomeTanque] = false; }, 5000);
+      } else if (tipo === 'escudo') {
+        escudos[nomeTanque] = true;
+        document.getElementById('escudo'+i).style.display = 'block';
+        setTimeout(() => {
+          escudos[nomeTanque] = false;
+          document.getElementById('escudo'+i).style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    socket.on('powerup-coletado', (data) => {
+      const pu = powerUpsAtuais.find(p => p.id === data.id);
+      if (pu) pu.ativo = false;
+      document.querySelector(`.powerup[data-id="${data.id}"]`)?.remove();
+      aplicarPowerUp(data.tanque, data.tipo);
+    });
 
     // ===== LOBBY =====
     socket.on('lobby-atualizado', (data) => {
@@ -327,15 +589,15 @@
     socket.on('jogo-iniciado', (data) => {
       mapaAtual = data.mapa;
       obstaculosAtuais = data.obstaculos;
+      powerUpsAtuais   = data.powerups || [];
       prepararJogo();
       iniciarContagem();
     });
 
     function prepararJogo() {
-      const emojis = ['🟦','🟥','🟩','🟨'];
       ['tanque1','tanque2','tanque3','tanque4'].forEach((t,i) => {
         if (jogadores[t]) {
-          document.getElementById('nome'+(i+1)).textContent = emojis[i]+' '+jogadores[t];
+          document.getElementById('nome'+(i+1)).textContent = jogadores[t];
           document.getElementById('info'+(i+1)).style.display = 'flex';
           tanques[t].style.display = 'block';
         } else {
@@ -349,10 +611,10 @@
         const el = document.createElement('div');
         el.classList.add('obstaculo');
         el.style.left = ob.x+'px'; el.style.top = ob.y+'px';
-        el.style.width = ob.w+'px'; el.style.height = ob.h+'px';
         el.textContent = emojiObstaculo[mapaAtual] || '🪨';
         document.getElementById('arena').appendChild(el);
       });
+      renderizarPowerUps();
     }
 
     function iniciarContagem() {
@@ -382,12 +644,13 @@
     function atualizarVidas(tanque) {
       const i = tanque.replace('tanque','');
       document.getElementById('barra'+i).style.width = (vidas[tanque]/VIDAS_MAX*100)+'%';
+      document.getElementById('vidas-num'+i).textContent = '❤️ '+vidas[tanque]+'/'+VIDAS_MAX;
     }
 
     function colideObstaculo(nx, ny) {
       return obstaculosAtuais.some(ob =>
-        nx < ob.x+ob.w && nx+TAM > ob.x &&
-        ny < ob.y+ob.h && ny+TAM > ob.y
+        nx < ob.x+48 && nx+TAM > ob.x &&
+        ny < ob.y+48 && ny+TAM > ob.y
       );
     }
 
@@ -398,13 +661,14 @@
       if (!tanque) return;
 
       if (data.dx !== undefined) {
-        const vel = 4, steps = 4;
+        const vel = velExtra[data.tanque] ? 7 : 4;
+        const steps = 4;
         let nx = pos.x, ny = pos.y;
         const sx = (data.dx * vel) / steps;
         const sy = (data.dy * vel) / steps;
         for (let i=0; i<steps; i++) {
-          const tx = Math.max(0, Math.min(900-TAM, nx+sx));
-          const ty = Math.max(0, Math.min(500-TAM, ny+sy));
+          const tx = Math.max(0, Math.min(ARENA_W-TAM, nx+sx));
+          const ty = Math.max(0, Math.min(ARENA_H-TAM, ny+sy));
           if (!colideObstaculo(tx, ny)) nx = tx;
           if (!colideObstaculo(nx, ty)) ny = ty;
         }
@@ -423,6 +687,7 @@
         tanque.style.top       = pos.y+'px';
         tanque.style.transform = `rotate(${pos.dir+90}deg)`;
         desenharBoneco(data.tanque);
+        checarPowerUps(data.tanque);
       }
 
       if (data.atirar) atirar(data.tanque);
@@ -430,24 +695,21 @@
 
     function atirar(nomeTanque) {
       if (cooldowns[nomeTanque]) return;
+      const tempoRecarga = velExtra[nomeTanque] ? 300 : 600;
       cooldowns[nomeTanque] = true;
-      setTimeout(() => { cooldowns[nomeTanque] = false; }, 600);
+      setTimeout(() => { cooldowns[nomeTanque] = false; }, tempoRecarga);
+
+      tocarSomTiro();
 
       const pos = posicoes[nomeTanque];
       const cor = cores[nomeTanque];
-
-      // pos.dir = ângulo do joystick (0=direita, 90=baixo, -90=cima, 180=esquerda)
-      // CSS aplica rotate(pos.dir + 90), que faz o cano (apontando pra cima no canvas)
-      // girar para a direção pos.dir no mundo.
-      // Então o ângulo real do cano no mundo = pos.dir graus
-      // Math.cos/sin usam radianos com Y pra baixo (igual CSS)
       const rad = pos.dir * Math.PI / 180;
       const canoDist = R + CANO;
 
       let tx = pos.x + TAM/2 + Math.cos(rad) * canoDist;
       let ty = pos.y + TAM/2 + Math.sin(rad) * canoDist;
-      const ddx = Math.cos(rad) * 12;
-      const ddy = Math.sin(rad) * 12;
+      const ddx = Math.cos(rad) * 14;
+      const ddy = Math.sin(rad) * 14;
 
       const tiro = document.createElement('div');
       tiro.classList.add('tiro');
@@ -463,7 +725,7 @@
         tiro.style.top  = (ty-4)+'px';
 
         if (obstaculosAtuais.some(ob =>
-          tx>ob.x && tx<ob.x+ob.w && ty>ob.y && ty<ob.y+ob.h
+          tx>ob.x && tx<ob.x+48 && ty>ob.y && ty<ob.y+48
         )) { clearInterval(intervalo); tiro.remove(); return; }
 
         for (const inimigo in tanques) {
@@ -473,20 +735,34 @@
           const dy2 = ty-(pi.y+TAM/2);
           if (Math.sqrt(dx2*dx2+dy2*dy2) < R+4) {
             clearInterval(intervalo); tiro.remove();
+
+            if (escudos[inimigo]) {
+              // Escudo absorve o tiro
+              tocarSomHit();
+              tanques[inimigo].style.opacity='0.5';
+              setTimeout(()=>{ if(!eliminado[inimigo]) tanques[inimigo].style.opacity='1'; },200);
+              return;
+            }
+
+            tocarSomHit();
             vidas[inimigo]--;
             atualizarVidas(inimigo);
             tanques[inimigo].style.opacity='0.2';
             setTimeout(()=>{ if(!eliminado[inimigo]) tanques[inimigo].style.opacity='1'; },400);
+
             if (vidas[inimigo]<=0) {
               eliminado[inimigo]=true;
               tanques[inimigo].classList.add('eliminado');
+              criarExplosao(pi.x+TAM/2, pi.y+TAM/2);
+              const iNum = inimigo.replace('tanque','');
+              document.getElementById('info'+iNum).classList.add('eliminado-placar');
               socket.emit('jogador-eliminado', inimigo);
               verificarVencedor();
             }
             return;
           }
         }
-        if (tx<0||tx>900||ty<0||ty>500){ clearInterval(intervalo); tiro.remove(); }
+        if (tx<0||tx>ARENA_W||ty<0||ty>ARENA_H){ clearInterval(intervalo); tiro.remove(); }
       }, 16);
     }
 
@@ -496,8 +772,7 @@
         jogoAtivo=false;
         if(bonecoLoop){ clearInterval(bonecoLoop); bonecoLoop=null; }
         const v=vivos[0];
-        const emoji={tanque1:'🟦',tanque2:'🟥',tanque3:'🟩',tanque4:'🟨'};
-        document.getElementById('nome-vencedor').textContent=emoji[v]+' '+jogadores[v];
+        document.getElementById('nome-vencedor').textContent = jogadores[v];
         document.getElementById('nome-mapa').textContent='Mapa: '+nomesMapa[mapaAtual];
         setTimeout(()=>{ document.getElementById('tela-final').style.display='flex'; },1000);
       }
@@ -509,6 +784,12 @@
       for(const t in vidas)     vidas[t]=VIDAS_MAX;
       for(const t in eliminado) eliminado[t]=false;
       for(const t in cooldowns) cooldowns[t]=false;
+      for(const t in escudos)   escudos[t]=false;
+      for(const t in velExtra)  velExtra[t]=false;
+      for(let i=1;i<=4;i++){
+        document.getElementById('escudo'+i).style.display='none';
+        document.getElementById('info'+i).classList.remove('eliminado-placar');
+      }
       for(const t in posicoes){
         posicoes[t].x=posicoesIniciais[t].x;
         posicoes[t].y=posicoesIniciais[t].y;
@@ -519,16 +800,21 @@
         tanques[t].style.left=posicoes[t].x+'px';
         tanques[t].style.top=posicoes[t].y+'px';
       }
-      for(let i=1;i<=4;i++) document.getElementById('barra'+i).style.width='100%';
+      for(let i=1;i<=4;i++){
+        document.getElementById('barra'+i).style.width='100%';
+        document.getElementById('vidas-num'+i).textContent='❤️ 8/8';
+      }
       document.getElementById('tela-final').style.display='none';
       document.getElementById('jogo').style.display='none';
+      document.querySelectorAll('.powerup').forEach(e=>e.remove());
+      document.querySelectorAll('.explosao').forEach(e=>e.remove());
     }
 
     function revanche()    { socket.emit('revanche'); }
     function novaPartida() { socket.emit('nova-partida'); }
 
     socket.on('revanche',(data)=>{
-      mapaAtual=data.mapa; obstaculosAtuais=data.obstaculos;
+      mapaAtual=data.mapa; obstaculosAtuais=data.obstaculos; powerUpsAtuais=data.powerups||[];
       resetarJogo(); prepararJogo(); iniciarContagem();
     });
     socket.on('nova-partida',()=>{ location.reload(); });
