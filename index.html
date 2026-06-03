@@ -1,3 +1,4 @@
+cat > /home/claude/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -5,261 +6,94 @@
   <title>Batalha do Código</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background-color: #0a0a1a;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* ===== LOBBY ===== */
-    #tela-lobby {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 25px; position: absolute;
-      width: 100%; height: 100%; background-color: #0a0a1a; z-index: 10;
-    }
+    body { background-color: #0a0a1a; color: white; font-family: Arial, sans-serif; display: flex; flex-direction: row; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+    #tela-lobby { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 25px; position: absolute; width: 100%; height: 100%; background-color: #0a0a1a; z-index: 10; }
     #tela-lobby h1 { font-size: 2.8rem; color: #00e5ff; text-shadow: 0 0 20px #00e5ff; }
     .lobby-jogadores { display: flex; gap: 20px; align-items: center; }
-    .slot {
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      width: 150px; padding: 18px; border-radius: 15px;
-      border: 2px solid #333; background-color: #111133; transition: all 0.3s;
-    }
+    .slot { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 150px; padding: 18px; border-radius: 15px; border: 2px solid #333; background-color: #111133; transition: all 0.3s; }
     .slot.conectado { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0,229,255,0.3); }
-    .slot-foto {
-      width: 70px; height: 70px; border-radius: 50%; object-fit: cover;
-      border: 3px solid #333; transition: border-color 0.3s, box-shadow 0.3s;
-    }
+    .slot-foto { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #333; transition: border-color 0.3s, box-shadow 0.3s; }
     .slot.conectado .slot-foto { border-color: #00e5ff; box-shadow: 0 0 10px rgba(0,229,255,0.5); }
     .slot-nome { font-size: 1rem; font-weight: bold; color: #aaaaaa; text-align: center; }
     .slot.conectado .slot-nome { color: white; }
     .slot-status { font-size: 0.8rem; color: #555; }
     .slot.conectado .slot-status { color: #00e5ff; }
-    #btn-iniciar {
-      padding: 15px 45px; font-size: 1.3rem; background-color: #555;
-      color: #999; border: none; border-radius: 15px; cursor: not-allowed;
-      font-weight: bold; transition: all 0.3s;
-    }
-    #btn-iniciar.pronto {
-      background-color: #00e5ff; color: #0a0a1a; cursor: pointer;
-      box-shadow: 0 0 20px rgba(0,229,255,0.5);
-    }
+    #btn-iniciar { padding: 15px 45px; font-size: 1.3rem; background-color: #555; color: #999; border: none; border-radius: 15px; cursor: not-allowed; font-weight: bold; transition: all 0.3s; }
+    #btn-iniciar.pronto { background-color: #00e5ff; color: #0a0a1a; cursor: pointer; box-shadow: 0 0 20px rgba(0,229,255,0.5); }
     #btn-iniciar.pronto:hover { transform: scale(1.05); }
     .instrucao { font-size: 0.9rem; color: #666; text-align: center; }
-
-    /* ===== CONTAGEM ===== */
-    #contagem {
-      display: none; position: absolute; width: 100%; height: 100%; z-index: 9;
-      align-items: center; justify-content: center; font-size: 10rem;
-      font-weight: bold; color: #00e5ff; text-shadow: 0 0 40px #00e5ff;
-      background: rgba(0,0,0,0.85);
-    }
-
-    /* ===== JOGO ===== */
-    #jogo {
-      display: none; flex-direction: row; align-items: flex-start;
-      gap: 0; width: 100%; height: 100vh;
-    }
-
-    /* ===== PLACAR LATERAL ===== */
-    #placar-lateral {
-      width: 180px; min-width: 180px; height: 100vh;
-      background: #0d0d22; border-right: 2px solid #00e5ff;
-      display: flex; flex-direction: column; align-items: center;
-      padding: 15px 10px; gap: 15px;
-      box-shadow: 4px 0 20px rgba(0,229,255,0.15);
-    }
-    #placar-lateral h2 {
-      color: #00e5ff; font-size: 1rem; text-align: center;
-      text-shadow: 0 0 10px #00e5ff; letter-spacing: 1px;
-    }
-    .info-tanque {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 6px; width: 100%; padding: 10px 8px;
-      border-radius: 12px; background: #111133;
-      border: 1px solid #222; transition: all 0.3s;
-    }
+    #contagem { display: none; position: absolute; width: 100%; height: 100%; z-index: 9; align-items: center; justify-content: center; font-size: 10rem; font-weight: bold; color: #00e5ff; text-shadow: 0 0 40px #00e5ff; background: rgba(0,0,0,0.85); }
+    #jogo { display: none; flex-direction: row; align-items: flex-start; width: 100%; height: 100vh; }
+    #placar-lateral { width: 180px; min-width: 180px; height: 100vh; background: #0d0d22; border-right: 2px solid #00e5ff; display: flex; flex-direction: column; align-items: center; padding: 15px 10px; gap: 15px; box-shadow: 4px 0 20px rgba(0,229,255,0.15); }
+    #placar-lateral h2 { color: #00e5ff; font-size: 1rem; text-align: center; text-shadow: 0 0 10px #00e5ff; letter-spacing: 1px; }
+    .info-tanque { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; padding: 10px 8px; border-radius: 12px; background: #111133; border: 1px solid #222; transition: all 0.3s; }
     .info-tanque.eliminado-placar { opacity: 0.35; filter: grayscale(1); }
     .info-topo { display: flex; align-items: center; gap: 8px; width: 100%; }
-    .foto-placar {
-      width: 38px; height: 38px; border-radius: 50%; object-fit: cover;
-      border: 2px solid #555; flex-shrink: 0;
-    }
+    .foto-placar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid #555; flex-shrink: 0; }
     .nome-tanque { font-size: 0.8rem; font-weight: bold; flex: 1; }
-    #nome1 { color: #4488ff; } #nome2 { color: #ff4444; }
-    #nome3 { color: #44cc44; } #nome4 { color: #ffaa00; }
-    .barra-vida-container {
-      width: 100%; height: 12px; background-color: #333;
-      border-radius: 10px; overflow: hidden; border: 1px solid #444;
-    }
+    #nome1{color:#4488ff;}#nome2{color:#ff4444;}#nome3{color:#44cc44;}#nome4{color:#ffaa00;}
+    .barra-vida-container { width: 100%; height: 12px; background-color: #333; border-radius: 10px; overflow: hidden; border: 1px solid #444; }
     .barra-vida { height: 100%; border-radius: 10px; transition: width 0.3s; }
-    #barra1 { background-color: #4488ff; width: 100%; }
-    #barra2 { background-color: #ff4444; width: 100%; }
-    #barra3 { background-color: #44cc44; width: 100%; }
-    #barra4 { background-color: #ffaa00; width: 100%; }
+    #barra1{background-color:#4488ff;width:100%;}#barra2{background-color:#ff4444;width:100%;}
+    #barra3{background-color:#44cc44;width:100%;}#barra4{background-color:#ffaa00;width:100%;}
     .vidas-num { font-size: 0.7rem; color: #888; }
     .status-escudo { font-size: 0.75rem; color: #00e5ff; display: none; }
-
-    /* ===== ARENA ===== */
-    #arena-wrapper {
-      flex: 1; height: 100vh; display: flex;
-      align-items: center; justify-content: center;
-      overflow: hidden; position: relative;
-    }
-    #arena {
-      width: 800px; height: 650px; position: relative;
-      overflow: hidden; border: 3px solid #00e5ff;
-      box-shadow: 0 0 40px rgba(0,229,255,0.3);
-    }
+    #arena-wrapper { flex: 1; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    #arena { width: 800px; height: 650px; position: relative; overflow: hidden; border: 3px solid #00e5ff; box-shadow: 0 0 40px rgba(0,229,255,0.3); }
     #arena-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; }
     .tanque { width: 48px; height: 48px; position: absolute; z-index: 3; transition: opacity 0.2s; }
     .tanque.eliminado { display: none; }
     .tiro { width: 8px; height: 8px; border-radius: 50%; position: absolute; z-index: 5; }
-    .obstaculo {
-      position: absolute; z-index: 2; display: flex;
-      align-items: center; justify-content: center; font-size: 2.2rem;
-      width: 48px; height: 48px;
-    }
-
-    /* ===== POWER-UPS ===== */
-    .powerup {
-      position: absolute; z-index: 4; width: 36px; height: 36px;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem; animation: pulsePowerup 1.2s ease-in-out infinite;
-      border: 2px solid rgba(255,255,255,0.4);
-    }
-    .powerup.vida    { background: rgba(255,50,50,0.8); }
-    .powerup.rapido  { background: rgba(255,200,0,0.8); }
-    .powerup.escudo  { background: rgba(0,150,255,0.8); }
-    @keyframes pulsePowerup {
-      0%,100% { transform: scale(1); box-shadow: 0 0 8px rgba(255,255,255,0.4); }
-      50%      { transform: scale(1.15); box-shadow: 0 0 18px rgba(255,255,255,0.7); }
-    }
-
-    /* ===== EXPLOSÃO ===== */
-    .explosao {
-      position: absolute; z-index: 10; pointer-events: none;
-      font-size: 3.5rem; animation: explodir 0.6s ease-out forwards;
-      transform-origin: center;
-    }
-    @keyframes explodir {
-      0%   { transform: scale(0.3); opacity: 1; }
-      50%  { transform: scale(1.4); opacity: 1; }
-      100% { transform: scale(2); opacity: 0; }
-    }
-
-    /* ===== TELA FINAL ===== */
-    #tela-final {
-      display: none; position: absolute; width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.92); z-index: 20;
-      flex-direction: column; align-items: center; justify-content: center; gap: 25px;
-    }
-    #tela-final h2 { font-size: 2rem; color: #ffaa00; }
-    #nome-vencedor { font-size: 3rem; font-weight: bold; color: #00e5ff; text-shadow: 0 0 30px #00e5ff; }
-    #nome-mapa { font-size: 1rem; color: #666; }
-    .btns-final { display: flex; gap: 20px; margin-top: 10px; }
-    .btn-final { padding: 15px 35px; font-size: 1.1rem; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; transition: transform 0.1s; }
-    .btn-final:hover { transform: scale(1.05); }
-    #btn-revanche { background-color: #ff6600; color: white; }
-    #btn-nova     { background-color: #00e5ff; color: #0a0a1a; }
+    .powerup { position: absolute; z-index: 4; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; animation: pulsePowerup 1.2s ease-in-out infinite; border: 2px solid rgba(255,255,255,0.4); }
+    .powerup.vida{background:rgba(255,50,50,0.8);}.powerup.rapido{background:rgba(255,200,0,0.8);}.powerup.escudo{background:rgba(0,150,255,0.8);}
+    @keyframes pulsePowerup{0%,100%{transform:scale(1);box-shadow:0 0 8px rgba(255,255,255,0.4);}50%{transform:scale(1.15);box-shadow:0 0 18px rgba(255,255,255,0.7);}}
+    .explosao { position: absolute; z-index: 10; pointer-events: none; font-size: 3.5rem; animation: explodir 0.6s ease-out forwards; transform-origin: center; }
+    @keyframes explodir{0%{transform:scale(0.3);opacity:1;}50%{transform:scale(1.4);opacity:1;}100%{transform:scale(2);opacity:0;}}
+    #tela-final { display: none; position: absolute; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); z-index: 20; flex-direction: column; align-items: center; justify-content: center; gap: 25px; }
+    #tela-final h2{font-size:2rem;color:#ffaa00;}
+    #nome-vencedor{font-size:3rem;font-weight:bold;color:#00e5ff;text-shadow:0 0 30px #00e5ff;}
+    #nome-mapa{font-size:1rem;color:#666;}
+    .btns-final{display:flex;gap:20px;margin-top:10px;}
+    .btn-final{padding:15px 35px;font-size:1.1rem;border:none;border-radius:15px;cursor:pointer;font-weight:bold;transition:transform 0.1s;}
+    .btn-final:hover{transform:scale(1.05);}
+    #btn-revanche{background-color:#ff6600;color:white;}#btn-nova{background-color:#00e5ff;color:#0a0a1a;}
   </style>
 </head>
 <body>
-
-  <!-- LOBBY -->
   <div id="tela-lobby">
     <h1>⚔️ Batalha do Código ⚔️</h1>
     <p style="color:#aaaaaa;">Grupo ACDC — escaneie o QR Code e entre no jogo!</p>
     <div class="lobby-jogadores">
-      <div class="slot" id="slot1">
-        <img src="/foto1.jpeg" class="slot-foto">
-        <div class="slot-nome" id="nome-slot1">Aguardando...</div>
-        <div class="slot-status" id="status-slot1">Vaga aberta</div>
-      </div>
-      <div class="slot" id="slot2">
-        <img src="/foto2.jpeg" class="slot-foto">
-        <div class="slot-nome" id="nome-slot2">Aguardando...</div>
-        <div class="slot-status" id="status-slot2">Vaga aberta</div>
-      </div>
-      <div class="slot" id="slot3">
-        <img src="/foto3.jpeg" class="slot-foto">
-        <div class="slot-nome" id="nome-slot3">Aguardando...</div>
-        <div class="slot-status" id="status-slot3">Vaga aberta</div>
-      </div>
-      <div class="slot" id="slot4">
-        <img src="/foto4.jpeg" class="slot-foto">
-        <div class="slot-nome" id="nome-slot4">Aguardando...</div>
-        <div class="slot-status" id="status-slot4">Vaga aberta</div>
-      </div>
+      <div class="slot" id="slot1"><img src="/foto1.jpeg" class="slot-foto"><div class="slot-nome" id="nome-slot1">Aguardando...</div><div class="slot-status" id="status-slot1">Vaga aberta</div></div>
+      <div class="slot" id="slot2"><img src="/foto2.jpeg" class="slot-foto"><div class="slot-nome" id="nome-slot2">Aguardando...</div><div class="slot-status" id="status-slot2">Vaga aberta</div></div>
+      <div class="slot" id="slot3"><img src="/foto3.jpeg" class="slot-foto"><div class="slot-nome" id="nome-slot3">Aguardando...</div><div class="slot-status" id="status-slot3">Vaga aberta</div></div>
+      <div class="slot" id="slot4"><img src="/foto4.jpeg" class="slot-foto"><div class="slot-nome" id="nome-slot4">Aguardando...</div><div class="slot-status" id="status-slot4">Vaga aberta</div></div>
     </div>
     <button id="btn-iniciar" onclick="iniciarBatalha()">⚔️ INICIAR BATALHA</button>
     <p class="instrucao">Precisa de pelo menos 2 jogadores para iniciar</p>
   </div>
 
-  <!-- CONTAGEM -->
   <div id="contagem">3</div>
 
-  <!-- JOGO -->
   <div id="jogo">
-    <!-- PLACAR LATERAL ESQUERDO -->
     <div id="placar-lateral">
       <h2>⚔️ BATALHA ⚔️</h2>
-      <div class="info-tanque" id="info1">
-        <div class="info-topo">
-          <img src="/foto1.jpeg" class="foto-placar">
-          <span class="nome-tanque" id="nome1">Azul</span>
-        </div>
-        <div class="barra-vida-container"><div class="barra-vida" id="barra1"></div></div>
-        <div class="vidas-num" id="vidas-num1">❤️ 8/8</div>
-        <div class="status-escudo" id="escudo1">🛡️ Escudo ativo!</div>
-      </div>
-      <div class="info-tanque" id="info2">
-        <div class="info-topo">
-          <img src="/foto2.jpeg" class="foto-placar">
-          <span class="nome-tanque" id="nome2">Vermelho</span>
-        </div>
-        <div class="barra-vida-container"><div class="barra-vida" id="barra2"></div></div>
-        <div class="vidas-num" id="vidas-num2">❤️ 8/8</div>
-        <div class="status-escudo" id="escudo2">🛡️ Escudo ativo!</div>
-      </div>
-      <div class="info-tanque" id="info3">
-        <div class="info-topo">
-          <img src="/foto3.jpeg" class="foto-placar">
-          <span class="nome-tanque" id="nome3">Verde</span>
-        </div>
-        <div class="barra-vida-container"><div class="barra-vida" id="barra3"></div></div>
-        <div class="vidas-num" id="vidas-num3">❤️ 8/8</div>
-        <div class="status-escudo" id="escudo3">🛡️ Escudo ativo!</div>
-      </div>
-      <div class="info-tanque" id="info4">
-        <div class="info-topo">
-          <img src="/foto4.jpeg" class="foto-placar">
-          <span class="nome-tanque" id="nome4">Amarelo</span>
-        </div>
-        <div class="barra-vida-container"><div class="barra-vida" id="barra4"></div></div>
-        <div class="vidas-num" id="vidas-num4">❤️ 8/8</div>
-        <div class="status-escudo" id="escudo4">🛡️ Escudo ativo!</div>
-      </div>
+      <div class="info-tanque" id="info1"><div class="info-topo"><img src="/foto1.jpeg" class="foto-placar"><span class="nome-tanque" id="nome1">P1</span></div><div class="barra-vida-container"><div class="barra-vida" id="barra1"></div></div><div class="vidas-num" id="vidas-num1">❤️ 5/5</div><div class="status-escudo" id="escudo1">🛡️ Escudo ativo!</div></div>
+      <div class="info-tanque" id="info2"><div class="info-topo"><img src="/foto2.jpeg" class="foto-placar"><span class="nome-tanque" id="nome2">P2</span></div><div class="barra-vida-container"><div class="barra-vida" id="barra2"></div></div><div class="vidas-num" id="vidas-num2">❤️ 5/5</div><div class="status-escudo" id="escudo2">🛡️ Escudo ativo!</div></div>
+      <div class="info-tanque" id="info3"><div class="info-topo"><img src="/foto3.jpeg" class="foto-placar"><span class="nome-tanque" id="nome3">P3</span></div><div class="barra-vida-container"><div class="barra-vida" id="barra3"></div></div><div class="vidas-num" id="vidas-num3">❤️ 5/5</div><div class="status-escudo" id="escudo3">🛡️ Escudo ativo!</div></div>
+      <div class="info-tanque" id="info4"><div class="info-topo"><img src="/foto4.jpeg" class="foto-placar"><span class="nome-tanque" id="nome4">P4</span></div><div class="barra-vida-container"><div class="barra-vida" id="barra4"></div></div><div class="vidas-num" id="vidas-num4">❤️ 5/5</div><div class="status-escudo" id="escudo4">🛡️ Escudo ativo!</div></div>
     </div>
-
-    <!-- ARENA -->
     <div id="arena-wrapper">
       <div id="arena">
         <canvas id="arena-bg"></canvas>
-        <canvas class="tanque" id="tanque1" width="48" height="48" style="left:30px; top:30px;"></canvas>
-        <canvas class="tanque" id="tanque2" width="48" height="48" style="left:742px; top:30px;"></canvas>
-        <canvas class="tanque" id="tanque3" width="48" height="48" style="left:30px; top:572px;"></canvas>
-        <canvas class="tanque" id="tanque4" width="48" height="48" style="left:742px; top:572px;"></canvas>
+        <canvas class="tanque" id="tanque1" width="48" height="48" style="left:30px;top:30px;"></canvas>
+        <canvas class="tanque" id="tanque2" width="48" height="48" style="left:722px;top:30px;"></canvas>
+        <canvas class="tanque" id="tanque3" width="48" height="48" style="left:30px;top:572px;"></canvas>
+        <canvas class="tanque" id="tanque4" width="48" height="48" style="left:722px;top:572px;"></canvas>
       </div>
     </div>
   </div>
 
-  <!-- TELA FINAL -->
   <div id="tela-final">
     <div style="font-size:4rem;">🏆</div>
     <h2>VENCEDOR</h2>
@@ -267,7 +101,7 @@
     <div id="nome-mapa"></div>
     <div class="btns-final">
       <button class="btn-final" id="btn-revanche" onclick="revanche()">🔄 REVANCHE</button>
-      <button class="btn-final" id="btn-nova"     onclick="novaPartida()">🏠 NOVA PARTIDA</button>
+      <button class="btn-final" id="btn-nova" onclick="novaPartida()">🏠 NOVA PARTIDA</button>
     </div>
   </div>
 
@@ -275,549 +109,462 @@
   <script>
     const socket = io();
     let jogoAtivo = false;
-    const VIDAS_MAX = 8;
-    const TAM  = 48;
-    const R    = 16;
-    const CANO = 14;
-    const ARENA_W = 800;
-    const ARENA_H = 650;
+    const VIDAS_MAX = 5;
+    const TAM=48, R=16, CANO=14, ARENA_W=800, ARENA_H=650;
 
-    const jogadores = { tanque1: null, tanque2: null, tanque3: null, tanque4: null };
-    let obstaculosAtuais = [];
-    let powerUpsAtuais   = [];
-    let mapaAtual = '';
-    let bonecoLoop = null;
+    const jogadores={tanque1:null,tanque2:null,tanque3:null,tanque4:null};
+    let obstaculosAtuais=[], powerUpsAtuais=[], mapaAtual='', bonecoLoop=null, obsCanvas=null;
+    const escudos={tanque1:false,tanque2:false,tanque3:false,tanque4:false};
+    const velExtra={tanque1:false,tanque2:false,tanque3:false,tanque4:false};
 
-    // Escudos e velocidades especiais
-    const escudos   = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
-    const velExtra  = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
+    const audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    function tocarSomTiro(){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='square';o.frequency.setValueAtTime(300,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(80,audioCtx.currentTime+0.12);g.gain.setValueAtTime(0.15,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.12);o.start();o.stop(audioCtx.currentTime+0.12);}
+    function tocarSomHit(){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='sawtooth';o.frequency.setValueAtTime(200,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(50,audioCtx.currentTime+0.2);g.gain.setValueAtTime(0.2,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);o.start();o.stop(audioCtx.currentTime+0.2);}
+    function tocarSomExplosao(){const sz=audioCtx.sampleRate*0.5,buf=audioCtx.createBuffer(1,sz,audioCtx.sampleRate),d=buf.getChannelData(0);for(let i=0;i<sz;i++)d[i]=Math.random()*2-1;const s=audioCtx.createBufferSource(),g=audioCtx.createGain();s.buffer=buf;s.connect(g);g.connect(audioCtx.destination);g.gain.setValueAtTime(0.35,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.5);s.start();s.stop(audioCtx.currentTime+0.5);}
+    function tocarSomPowerup(){[523,659,784].forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='sine';o.frequency.value=f;const t=audioCtx.currentTime+i*0.1;g.gain.setValueAtTime(0.18,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.15);o.start(t);o.stop(t+0.15);});}
 
-    // Sons via AudioContext
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const fotos={tanque1:new Image(),tanque2:new Image(),tanque3:new Image(),tanque4:new Image()};
+    fotos.tanque1.src='/foto1.jpeg';fotos.tanque2.src='/foto2.jpeg';fotos.tanque3.src='/foto3.jpeg';fotos.tanque4.src='/foto4.jpeg';
 
-    function tocarSomTiro(cor) {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.12);
-      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.12);
+    const tanques={tanque1:document.getElementById('tanque1'),tanque2:document.getElementById('tanque2'),tanque3:document.getElementById('tanque3'),tanque4:document.getElementById('tanque4')};
+    const posicoesIniciais={tanque1:{x:30,y:30,dir:0},tanque2:{x:722,y:30,dir:180},tanque3:{x:30,y:572,dir:0},tanque4:{x:722,y:572,dir:180}};
+    const posicoes={tanque1:{x:30,y:30,dir:0},tanque2:{x:722,y:30,dir:180},tanque3:{x:30,y:572,dir:0},tanque4:{x:722,y:572,dir:180}};
+    const vidas={tanque1:VIDAS_MAX,tanque2:VIDAS_MAX,tanque3:VIDAS_MAX,tanque4:VIDAS_MAX};
+    const eliminado={tanque1:false,tanque2:false,tanque3:false,tanque4:false};
+    const cooldowns={tanque1:false,tanque2:false,tanque3:false,tanque4:false};
+    const cores={tanque1:'#4488ff',tanque2:'#ff4444',tanque3:'#44cc44',tanque4:'#ffaa00'};
+    const nomesMapa={deserto:'🏜️ Deserto',floresta:'🌿 Floresta',espacial:'🌌 Espacial',vulcao:'🔥 Vulcão',xeriftech:'⚡ XerifTech'};
+
+    function colideJogador(nome,nx,ny){
+      for(const o in posicoes){if(o===nome||eliminado[o]||!jogadores[o])continue;const p=posicoes[o];if(nx<p.x+TAM&&nx+TAM>p.x&&ny<p.y+TAM&&ny+TAM>p.y)return true;}return false;
     }
 
-    function tocarSomHit() {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.2);
-      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-    }
-
-    function tocarSomExplosao() {
-      const bufferSize = audioCtx.sampleRate * 0.5;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1);
-      const source = audioCtx.createBufferSource();
-      source.buffer = buffer;
-      const gain = audioCtx.createGain();
-      gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-      source.connect(gain); gain.connect(audioCtx.destination);
-      source.start(); source.stop(audioCtx.currentTime + 0.5);
-    }
-
-    function tocarSomPowerup() {
-      [523, 659, 784].forEach((freq, i) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.value = freq;
-        const t = audioCtx.currentTime + i * 0.1;
-        gain.gain.setValueAtTime(0.2, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-        osc.start(t); osc.stop(t + 0.15);
-      });
-    }
-
-    const fotos = {
-      tanque1: new Image(), tanque2: new Image(),
-      tanque3: new Image(), tanque4: new Image()
-    };
-    fotos.tanque1.src = '/foto1.jpeg';
-    fotos.tanque2.src = '/foto2.jpeg';
-    fotos.tanque3.src = '/foto3.jpeg';
-    fotos.tanque4.src = '/foto4.jpeg';
-
-    const tanques = {
-      tanque1: document.getElementById('tanque1'),
-      tanque2: document.getElementById('tanque2'),
-      tanque3: document.getElementById('tanque3'),
-      tanque4: document.getElementById('tanque4')
-    };
-
-    const posicoesIniciais = {
-      tanque1: { x: 30,  y: 30,  dir: 0   },
-      tanque2: { x: 742, y: 30,  dir: 180 },
-      tanque3: { x: 30,  y: 572, dir: 0   },
-      tanque4: { x: 742, y: 572, dir: 180 }
-    };
-
-    const posicoes = {
-      tanque1: { x: 30,  y: 30,  dir: 0   },
-      tanque2: { x: 742, y: 30,  dir: 180 },
-      tanque3: { x: 30,  y: 572, dir: 0   },
-      tanque4: { x: 742, y: 572, dir: 180 }
-    };
-
-    const vidas     = { tanque1: VIDAS_MAX, tanque2: VIDAS_MAX, tanque3: VIDAS_MAX, tanque4: VIDAS_MAX };
-    const eliminado = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
-    const cooldowns = { tanque1: false, tanque2: false, tanque3: false, tanque4: false };
-    const cores     = { tanque1: '#4488ff', tanque2: '#ff4444', tanque3: '#44cc44', tanque4: '#ffaa00' };
-
-    const nomesMapa = {
-      deserto:'🏜️ Deserto', floresta:'🌿 Floresta',
-      espacial:'🌌 Espacial', cidade:'🏙️ Cidade', vulcao:'🔥 Vulcão'
-    };
-    const emojiObstaculo = {
-      deserto:'🌵', floresta:'🌲', espacial:'🪨', cidade:'🏢', vulcao:'🌋'
-    };
-
-    // ===== DESENHAR BONECO =====
-    function desenharBoneco(nomeTanque) {
-      const canvas = tanques[nomeTanque];
-      if (!canvas || !(canvas instanceof HTMLCanvasElement)) return;
-      const ctx = canvas.getContext('2d');
-      const cor = cores[nomeTanque];
-      const cx = TAM / 2, cy = TAM / 2;
-
-      ctx.clearRect(0, 0, TAM, TAM);
-
-      // Escudo visual
-      if (escudos[nomeTanque]) {
-        ctx.strokeStyle = 'rgba(0,200,255,0.6)';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(cx, cy, R + 5, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
-      // Cano aponta pra cima no canvas
-      ctx.fillStyle = '#333';
-      ctx.fillRect(cx - 2, cy - R - CANO, 4, CANO);
-      ctx.fillStyle = '#111';
-      ctx.fillRect(cx - 2, cy - R - CANO, 4, 3);
-
-      // Bola com foto
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.clip();
-      const foto = fotos[nomeTanque];
-      if (foto.complete && foto.naturalWidth > 0) {
-        const s = Math.min(foto.naturalWidth, foto.naturalHeight);
-        const sx = (foto.naturalWidth - s) / 2;
-        const sy = (foto.naturalHeight - s) / 2;
-        ctx.drawImage(foto, sx, sy, s, s, cx - R, cy - R, R * 2, R * 2);
-      } else {
-        ctx.fillStyle = cor;
-        ctx.fill();
-      }
+    function desenharBoneco(nomeTanque){
+      const canvas=tanques[nomeTanque];if(!canvas||!(canvas instanceof HTMLCanvasElement))return;
+      const ctx=canvas.getContext('2d'),cor=cores[nomeTanque],cx=TAM/2,cy=TAM/2;
+      ctx.clearRect(0,0,TAM,TAM);
+      if(escudos[nomeTanque]){ctx.strokeStyle='rgba(0,200,255,0.7)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,R+5,0,Math.PI*2);ctx.stroke();}
+      ctx.fillStyle='#555';ctx.fillRect(cx-2,cy-R-CANO,4,CANO);
+      ctx.fillStyle='#222';ctx.fillRect(cx-2,cy-R-CANO,4,3);
+      ctx.save();ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.clip();
+      const foto=fotos[nomeTanque];
+      if(foto.complete&&foto.naturalWidth>0){const s=Math.min(foto.naturalWidth,foto.naturalHeight);ctx.drawImage(foto,(foto.naturalWidth-s)/2,(foto.naturalHeight-s)/2,s,s,cx-R,cy-R,R*2,R*2);}
+      else{ctx.fillStyle=cor;ctx.fill();}
       ctx.restore();
-
-      // Borda colorida
-      ctx.strokeStyle = cor;
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.stroke();
+      ctx.strokeStyle=cor;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.stroke();
     }
+    function desenharTodosBonecos(){for(const t in tanques)if(!eliminado[t]&&jogadores[t])desenharBoneco(t);}
 
-    function desenharTodosBonecos() {
-      for (const t in tanques) {
-        if (!eliminado[t] && jogadores[t]) desenharBoneco(t);
-      }
-    }
+    // ===== MAPAS =====
+    function desenharFundo(mapa){
+      const canvas=document.getElementById('arena-bg');
+      canvas.width=ARENA_W;canvas.height=ARENA_H;
+      const ctx=canvas.getContext('2d');
 
-    // ===== FUNDO =====
-    function desenharFundo(mapa) {
-      const canvas = document.getElementById('arena-bg');
-      canvas.width = ARENA_W; canvas.height = ARENA_H;
-      const ctx = canvas.getContext('2d');
-      if (mapa === 'deserto') {
-        const g = ctx.createLinearGradient(0,0,ARENA_W,ARENA_H);
-        g.addColorStop(0,'#d4a853'); g.addColorStop(1,'#a0722a');
-        ctx.fillStyle = g; ctx.fillRect(0,0,ARENA_W,ARENA_H);
-        ctx.fillStyle = 'rgba(255,220,100,0.18)';
-        for(let i=0;i<50;i++){ctx.beginPath();ctx.ellipse(Math.random()*ARENA_W,Math.random()*ARENA_H,30+Math.random()*80,10+Math.random()*25,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
-      } else if (mapa === 'floresta') {
-        const g = ctx.createLinearGradient(0,0,ARENA_W,ARENA_H);
-        g.addColorStop(0,'#1a4a1a'); g.addColorStop(1,'#0a2a0a');
-        ctx.fillStyle = g; ctx.fillRect(0,0,ARENA_W,ARENA_H);
-        ctx.fillStyle = 'rgba(60,180,60,0.12)';
-        for(let i=0;i<60;i++){ctx.beginPath();ctx.ellipse(Math.random()*ARENA_W,Math.random()*ARENA_H,20+Math.random()*60,8+Math.random()*20,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
-      } else if (mapa === 'espacial') {
-        ctx.fillStyle='#00000f'; ctx.fillRect(0,0,ARENA_W,ARENA_H);
-        ctx.fillStyle='white';
-        for(let i=0;i<350;i++){ctx.beginPath();ctx.arc(Math.random()*ARENA_W,Math.random()*ARENA_H,Math.random()*1.8,0,Math.PI*2);ctx.fill();}
-        const gn=ctx.createRadialGradient(ARENA_W/2,ARENA_H/2,0,ARENA_W/2,ARENA_H/2,400);
-        gn.addColorStop(0,'rgba(100,0,180,0.15)'); gn.addColorStop(1,'rgba(0,0,0,0)');
-        ctx.fillStyle=gn; ctx.fillRect(0,0,ARENA_W,ARENA_H);
-      } else if (mapa === 'cidade') {
-        ctx.fillStyle='#1a1a2a'; ctx.fillRect(0,0,ARENA_W,ARENA_H);
-        ctx.fillStyle='#2a2a3a';
-        ctx.fillRect(0,320,ARENA_W,60);
-        ctx.fillRect(650,0,60,ARENA_H);
-        ctx.strokeStyle='#ffff00'; ctx.setLineDash([20,20]); ctx.lineWidth=2;
-        ctx.beginPath();ctx.moveTo(0,350);ctx.lineTo(ARENA_W,350);ctx.stroke();
-        ctx.beginPath();ctx.moveTo(680,0);ctx.lineTo(680,ARENA_H);ctx.stroke();
-        ctx.setLineDash([]);
-      } else if (mapa === 'vulcao') {
+      if(mapa==='deserto'){
+        const g=ctx.createLinearGradient(0,0,0,ARENA_H);
+        g.addColorStop(0,'#f0d080');g.addColorStop(0.5,'#d4a853');g.addColorStop(1,'#8B6914');
+        ctx.fillStyle=g;ctx.fillRect(0,0,ARENA_W,ARENA_H);
+        // dunas
+        ctx.fillStyle='#c49a3a';
+        for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse(80+i*180,ARENA_H-40,150,70,0,Math.PI,0);ctx.fill();}
+        // pedras
+        for(let i=0;i<12;i++){const rx=(i*173+60)%750,ry=80+(i*97)%500;ctx.fillStyle=`hsl(35,40%,${30+i%15}%)`;ctx.beginPath();ctx.ellipse(rx,ry,15+i%12,10+i%8,i*0.4,0,Math.PI*2);ctx.fill();}
+        // sol
+        const sol=ctx.createRadialGradient(ARENA_W-80,60,0,ARENA_W-80,60,50);
+        sol.addColorStop(0,'#fff7a0');sol.addColorStop(0.4,'#ffd700');sol.addColorStop(1,'rgba(255,150,0,0)');
+        ctx.fillStyle=sol;ctx.fillRect(ARENA_W-140,10,120,120);
+
+      } else if(mapa==='floresta'){
+        // Chão com textura
+        const g=ctx.createLinearGradient(0,0,0,ARENA_H);
+        g.addColorStop(0,'#1a3d0f');g.addColorStop(0.4,'#2a5a18');g.addColorStop(1,'#0d2008');
+        ctx.fillStyle=g;ctx.fillRect(0,0,ARENA_W,ARENA_H);
+        // Manchas de sombra no chão
+        ctx.fillStyle='rgba(0,0,0,0.15)';
+        for(let i=0;i<20;i++){const sx=(i*157+30)%780,sy=(i*113+20)%630;ctx.beginPath();ctx.ellipse(sx,sy,40+i%30,20+i%15,i*0.5,0,Math.PI*2);ctx.fill();}
+        // Moitas de mato no fundo
+        const mataCores=['#1a4a10','#224d14','#2d6618','#1e5510'];
+        for(let i=0;i<15;i++){
+          const mx=(i*137+20)%760,my=(i*89+10)%600;
+          ctx.fillStyle=mataCores[i%4];
+          ctx.beginPath();ctx.ellipse(mx,my,35+i%20,22+i%12,0,0,Math.PI*2);ctx.fill();
+          ctx.fillStyle=mataCores[(i+1)%4];
+          ctx.beginPath();ctx.ellipse(mx+15,my-8,25+i%15,16+i%10,0.3,0,Math.PI*2);ctx.fill();
+        }
+        // Raios de luz
+        ctx.save();
+        for(let i=0;i<5;i++){
+          const lx=80+i*160,ly=0;
+          const lg=ctx.createLinearGradient(lx,ly,lx+30,ARENA_H);
+          lg.addColorStop(0,'rgba(200,255,150,0.12)');lg.addColorStop(1,'rgba(200,255,150,0)');
+          ctx.fillStyle=lg;
+          ctx.beginPath();ctx.moveTo(lx,0);ctx.lineTo(lx+50,0);ctx.lineTo(lx+120,ARENA_H);ctx.lineTo(lx+60,ARENA_H);ctx.closePath();ctx.fill();
+        }
+        ctx.restore();
+        // Flores
+        const floresCores=['#ff6688','#ffdd44','#ff99cc','#aa44ff'];
+        for(let i=0;i<18;i++){
+          const fx=(i*113+40)%760,fy=(i*79+30)%610;
+          ctx.fillStyle=floresCores[i%4];
+          ctx.beginPath();ctx.arc(fx,fy,4,0,Math.PI*2);ctx.fill();
+          ctx.fillStyle='#ffff88';
+          ctx.beginPath();ctx.arc(fx,fy,2,0,Math.PI*2);ctx.fill();
+        }
+        // Folhas caindo
+        ctx.fillStyle='rgba(80,180,40,0.4)';
+        for(let i=0;i<10;i++){
+          const lx=(i*191+50)%760,ly=(i*137+10)%630;
+          ctx.save();ctx.translate(lx,ly);ctx.rotate(i*0.7);
+          ctx.beginPath();ctx.ellipse(0,0,8,4,0,0,Math.PI*2);ctx.fill();
+          ctx.restore();
+        }
+
+      } else if(mapa==='espacial'){
+        ctx.fillStyle='#00000a';ctx.fillRect(0,0,ARENA_W,ARENA_H);
+        // Estrelas com brilho variado
+        for(let i=0;i<280;i++){
+          const sx=(i*137+23)%ARENA_W,sy=(i*97+17)%ARENA_H;
+          const br=0.3+((i*53)%100)/100*0.7;
+          const sr=(i%5===0)?2:(i%3===0)?1.2:0.6;
+          ctx.fillStyle=`rgba(255,255,255,${br})`;
+          ctx.beginPath();ctx.arc(sx,sy,sr,0,Math.PI*2);ctx.fill();
+        }
+        // Nebulosas coloridas
+        [[600,180,180,'120,0,200'],[180,420,160,'0,80,200'],[400,300,120,'200,0,100']].forEach(([nx,ny,nr,nc])=>{
+          const nb=ctx.createRadialGradient(nx,ny,0,nx,ny,nr);
+          nb.addColorStop(0,`rgba(${nc},0.2)`);nb.addColorStop(1,'rgba(0,0,0,0)');
+          ctx.fillStyle=nb;ctx.fillRect(0,0,ARENA_W,ARENA_H);
+        });
+        // Planeta laranja com anel
+        const pl=ctx.createRadialGradient(680,100,5,670,90,50);
+        pl.addColorStop(0,'#ffaa66');pl.addColorStop(0.5,'#ff6622');pl.addColorStop(1,'#aa2200');
+        ctx.fillStyle=pl;ctx.beginPath();ctx.arc(680,100,45,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='rgba(255,150,80,0.6)';ctx.lineWidth=10;
+        ctx.beginPath();ctx.ellipse(680,100,70,20,0.3,0,Math.PI*2);ctx.stroke();
+        // Lua pequena
+        ctx.fillStyle='#aaaacc';ctx.beginPath();ctx.arc(200,120,22,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#888899';
+        [[195,115,4],[208,128,3],[190,128,5]].forEach(([cx,cy,cr])=>{ctx.beginPath();ctx.arc(cx,cy,cr,0,Math.PI*2);ctx.fill();});
+        // Chão lunar
+        ctx.fillStyle='#0d0d20';ctx.fillRect(0,520,ARENA_W,130);
+        ctx.strokeStyle='#1a1a35';ctx.lineWidth=2;
+        [[120,550,35],[300,580,22],[520,560,28],[720,590,18],[60,610,15],[420,600,20]].forEach(([cx,cy,cr])=>{
+          ctx.beginPath();ctx.arc(cx,cy,cr,0,Math.PI*2);ctx.stroke();
+          ctx.fillStyle='#0a0a1a';ctx.fill();
+        });
+
+      } else if(mapa==='vulcao'){
+        const g=ctx.createLinearGradient(0,0,0,ARENA_H);
+        g.addColorStop(0,'#1a0000');g.addColorStop(0.4,'#3a0800');g.addColorStop(1,'#5a1000');
+        ctx.fillStyle=g;ctx.fillRect(0,0,ARENA_W,ARENA_H);
+        // Chão de rocha escura com textura
+        ctx.fillStyle='#1f0500';
+        for(let i=0;i<25;i++){const rx=(i*157)%780,ry=(i*113)%630;ctx.beginPath();ctx.ellipse(rx,ry,50+i%40,20+i%15,i*0.3,0,Math.PI*2);ctx.fill();}
+        // Rios de lava brilhantes
+        [[0,180,200,220,500,300,800,260],[0,430,150,460,350,440,600,470,800,450]].forEach(pts=>{
+          ctx.lineWidth=18;ctx.strokeStyle='rgba(255,40,0,0.35)';
+          ctx.beginPath();ctx.moveTo(pts[0],pts[1]);
+          for(let i=2;i<pts.length;i+=2)ctx.lineTo(pts[i],pts[i+1]);ctx.stroke();
+          ctx.lineWidth=8;ctx.strokeStyle='rgba(255,120,0,0.5)';
+          ctx.beginPath();ctx.moveTo(pts[0],pts[1]);
+          for(let i=2;i<pts.length;i+=2)ctx.lineTo(pts[i],pts[i+1]);ctx.stroke();
+          ctx.lineWidth=3;ctx.strokeStyle='rgba(255,200,100,0.4)';
+          ctx.beginPath();ctx.moveTo(pts[0],pts[1]);
+          for(let i=2;i<pts.length;i+=2)ctx.lineTo(pts[i],pts[i+1]);ctx.stroke();
+        });
+        // Vulcão central
+        ctx.fillStyle='#2a0800';
+        ctx.beginPath();ctx.moveTo(400,ARENA_H);ctx.lineTo(300,280);ctx.lineTo(500,280);ctx.closePath();ctx.fill();
+        ctx.fillStyle='#3a1000';
+        ctx.beginPath();ctx.moveTo(400,ARENA_H);ctx.lineTo(330,340);ctx.lineTo(470,340);ctx.closePath();ctx.fill();
+        // Cratera com lava
+        const lv=ctx.createRadialGradient(400,280,0,400,280,38);
+        lv.addColorStop(0,'#ffdd00');lv.addColorStop(0.3,'#ff6600');lv.addColorStop(0.7,'#ff2200');lv.addColorStop(1,'#660000');
+        ctx.fillStyle=lv;ctx.beginPath();ctx.ellipse(400,280,38,20,0,0,Math.PI*2);ctx.fill();
+        // Fumaça
+        ctx.fillStyle='rgba(80,40,40,0.3)';
+        [[400,240,20],[395,210,16],[405,185,13],[398,165,10]].forEach(([fx,fy,fr])=>{ctx.beginPath();ctx.arc(fx,fy,fr,0,Math.PI*2);ctx.fill();});
+        // Faíscas
+        [[370,250,5],[420,240,4],[390,220,6],[415,260,3]].forEach(([fx,fy,fr])=>{
+          ctx.fillStyle=`rgba(255,${100+fr*30},0,0.8)`;ctx.beginPath();ctx.arc(fx,fy,fr,0,Math.PI*2);ctx.fill();
+        });
+
+      } else if(mapa==='xeriftech'){
+        // Fundo tech escuro
         const g=ctx.createLinearGradient(0,0,ARENA_W,ARENA_H);
-        g.addColorStop(0,'#2a0500'); g.addColorStop(1,'#1a0000');
-        ctx.fillStyle=g; ctx.fillRect(0,0,ARENA_W,ARENA_H);
-        ctx.fillStyle='rgba(255,60,0,0.12)';
-        for(let i=0;i<35;i++){ctx.beginPath();ctx.ellipse(Math.random()*ARENA_W,Math.random()*ARENA_H,30+Math.random()*100,10+Math.random()*25,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}
+        g.addColorStop(0,'#050518');g.addColorStop(0.5,'#0a0a2a');g.addColorStop(1,'#050518');
+        ctx.fillStyle=g;ctx.fillRect(0,0,ARENA_W,ARENA_H);
+
+        // Grade tech (circuito)
+        ctx.strokeStyle='rgba(0,229,255,0.07)';ctx.lineWidth=1;
+        for(let x=0;x<ARENA_W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,ARENA_H);ctx.stroke();}
+        for(let y=0;y<ARENA_H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(ARENA_W,y);ctx.stroke();}
+
+        // Linhas de circuito estilizadas
+        ctx.strokeStyle='rgba(0,229,255,0.15)';ctx.lineWidth=2;
+        [[0,160,200,160,200,240,350,240],[800,400,600,400,600,320,450,320],
+         [0,500,180,500,180,420,280,420],[800,200,650,200,650,300,500,300]].forEach(pts=>{
+          ctx.beginPath();ctx.moveTo(pts[0],pts[1]);
+          for(let i=2;i<pts.length;i+=2)ctx.lineTo(pts[i],pts[i+1]);ctx.stroke();
+          // Nó de circuito
+          ctx.fillStyle='rgba(0,229,255,0.3)';
+          ctx.beginPath();ctx.arc(pts[pts.length-2],pts[pts.length-1],4,0,Math.PI*2);ctx.fill();
+        });
+
+        // Pontos de luz no grid
+        ctx.fillStyle='rgba(0,229,255,0.2)';
+        for(let i=0;i<30;i++){
+          const px=(i*173+40)%760,py=(i*113+40)%610;
+          if((Math.floor(px/40)*40===px)||(Math.floor(py/40)*40===py)){
+            ctx.beginPath();ctx.arc(px,py,2,0,Math.PI*2);ctx.fill();
+          }
+        }
+
+        // LOGO XERIF TECH — texto grande estilizado no centro
+        ctx.save();
+        ctx.textAlign='center';ctx.textBaseline='middle';
+
+        // Sombra/glow do texto
+        ctx.shadowColor='#00e5ff';ctx.shadowBlur=30;
+        ctx.fillStyle='rgba(0,229,255,0.08)';
+        ctx.font='bold 110px Arial Black, Arial';
+        ctx.fillText('XERIF',ARENA_W/2,ARENA_H/2-55);
+        ctx.fillText('TECH',ARENA_W/2,ARENA_H/2+55);
+
+        // Texto principal
+        ctx.shadowBlur=15;
+        ctx.fillStyle='rgba(0,229,255,0.18)';
+        ctx.font='bold 100px Arial Black, Arial';
+        ctx.fillText('XERIF',ARENA_W/2,ARENA_H/2-55);
+        ctx.fillText('TECH',ARENA_W/2,ARENA_H/2+55);
+
+        // Linha decorativa entre as palavras
+        ctx.shadowBlur=10;
+        ctx.strokeStyle='rgba(0,229,255,0.3)';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(ARENA_W/2-120,ARENA_H/2);ctx.lineTo(ARENA_W/2+120,ARENA_H/2);ctx.stroke();
+
+        // Símbolo ⚡ no meio
+        ctx.fillStyle='rgba(0,229,255,0.25)';
+        ctx.font='bold 36px Arial';
+        ctx.fillText('⚡',ARENA_W/2,ARENA_H/2);
+
+        ctx.restore();
+        ctx.shadowBlur=0;
+
+        // Partículas flutuantes
+        for(let i=0;i<20;i++){
+          const px=(i*137+30)%760,py=(i*89+20)%610;
+          const alpha=0.1+((i*37)%100)/100*0.2;
+          ctx.fillStyle=`rgba(0,229,255,${alpha})`;
+          ctx.beginPath();ctx.arc(px,py,1.5,0,Math.PI*2);ctx.fill();
+        }
       }
     }
 
-    // ===== EXPLOSÃO =====
-    function criarExplosao(x, y) {
-      tocarSomExplosao();
-      const arena = document.getElementById('arena');
-      const el = document.createElement('div');
-      el.classList.add('explosao');
-      el.textContent = '💥';
-      el.style.left = (x - 24) + 'px';
-      el.style.top  = (y - 24) + 'px';
-      arena.appendChild(el);
-      setTimeout(() => el.remove(), 700);
-    }
-
-    // ===== POWER-UPS =====
-    function renderizarPowerUps() {
-      document.querySelectorAll('.powerup').forEach(e => e.remove());
-      const arena = document.getElementById('arena');
-      const emojis = { vida: '❤️', rapido: '⚡', escudo: '🛡️' };
-      powerUpsAtuais.forEach(pu => {
-        if (!pu.ativo) return;
-        const el = document.createElement('div');
-        el.classList.add('powerup', pu.tipo);
-        el.dataset.id = pu.id;
-        el.style.left = pu.x + 'px';
-        el.style.top  = pu.y + 'px';
-        el.textContent = emojis[pu.tipo];
-        arena.appendChild(el);
-      });
-    }
-
-    function checarPowerUps(nomeTanque) {
-      const pos = posicoes[nomeTanque];
-      const cx = pos.x + TAM/2, cy = pos.y + TAM/2;
-      powerUpsAtuais.forEach(pu => {
-        if (!pu.ativo) return;
-        const dx = cx - (pu.x + 18);
-        const dy = cy - (pu.y + 18);
-        if (Math.sqrt(dx*dx+dy*dy) < 36) {
-          pu.ativo = false;
-          socket.emit('powerup-coletado', { id: pu.id, tanque: nomeTanque, tipo: pu.tipo });
-          aplicarPowerUp(nomeTanque, pu.tipo);
-          document.querySelector(`.powerup[data-id="${pu.id}"]`)?.remove();
-        }
-      });
-    }
-
-    function aplicarPowerUp(nomeTanque, tipo) {
-      tocarSomPowerup();
-      const i = nomeTanque.replace('tanque','');
-      if (tipo === 'vida') {
-        vidas[nomeTanque] = Math.min(VIDAS_MAX, vidas[nomeTanque] + 3);
-        atualizarVidas(nomeTanque);
-      } else if (tipo === 'rapido') {
-        velExtra[nomeTanque] = true;
-        setTimeout(() => { velExtra[nomeTanque] = false; }, 5000);
-      } else if (tipo === 'escudo') {
-        escudos[nomeTanque] = true;
-        document.getElementById('escudo'+i).style.display = 'block';
-        setTimeout(() => {
-          escudos[nomeTanque] = false;
-          document.getElementById('escudo'+i).style.display = 'none';
-        }, 5000);
+    // ===== OBSTÁCULOS =====
+    function desenharObstaculo(ctx, mapa, x, y){
+      const cx=x+24,cy=y+24;
+      if(mapa==='deserto'){
+        ctx.fillStyle='#3d7a2a';ctx.fillRect(cx-4,cy-18,8,36);
+        ctx.fillRect(cx-16,cy-4,12,6);ctx.fillRect(cx-16,cy-18,6,20);
+        ctx.fillRect(cx+4,cy,12,6);ctx.fillRect(cx+10,cy-14,6,20);
+      } else if(mapa==='floresta'){
+        // Tronco
+        ctx.fillStyle='#5c3d1a';ctx.fillRect(cx-5,cy+2,10,22);
+        // Copa grande
+        ctx.fillStyle='#1a5c10';ctx.beginPath();ctx.arc(cx,cy-8,22,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#2d8020';ctx.beginPath();ctx.arc(cx-6,cy-2,15,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#3a9a28';ctx.beginPath();ctx.arc(cx+6,cy-2,15,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#44b030';ctx.beginPath();ctx.arc(cx,cy-16,13,0,Math.PI*2);ctx.fill();
+      } else if(mapa==='espacial'){
+        ctx.fillStyle='#222244';ctx.beginPath();ctx.arc(cx,cy,22,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#333366';ctx.beginPath();ctx.arc(cx-6,cy-6,13,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#5555aa';ctx.beginPath();ctx.arc(cx+6,cy+4,7,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='rgba(100,100,200,0.4)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy,22,0,Math.PI*2);ctx.stroke();
+      } else if(mapa==='vulcao'){
+        ctx.fillStyle='#1a0500';ctx.beginPath();ctx.arc(cx,cy,22,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='rgba(255,60,0,0.25)';ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='rgba(255,100,0,0.4)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,21,0,Math.PI*2);ctx.stroke();
+      } else if(mapa==='xeriftech'){
+        // Bloco de circuito
+        ctx.fillStyle='rgba(0,10,30,0.9)';ctx.fillRect(cx-20,cy-20,40,40);
+        ctx.strokeStyle='rgba(0,229,255,0.6)';ctx.lineWidth=2;ctx.strokeRect(cx-20,cy-20,40,40);
+        // Detalhes internos
+        ctx.strokeStyle='rgba(0,229,255,0.3)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(cx-20,cy);ctx.lineTo(cx-10,cy);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx+10,cy);ctx.lineTo(cx+20,cy);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx,cy-20);ctx.lineTo(cx,cy-10);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx,cy+10);ctx.lineTo(cx,cy+20);ctx.stroke();
+        ctx.fillStyle='rgba(0,229,255,0.5)';ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fill();
       }
     }
 
-    socket.on('powerup-coletado', (data) => {
-      const pu = powerUpsAtuais.find(p => p.id === data.id);
-      if (pu) pu.ativo = false;
-      document.querySelector(`.powerup[data-id="${data.id}"]`)?.remove();
-      aplicarPowerUp(data.tanque, data.tipo);
-    });
-
-    // ===== LOBBY =====
-    socket.on('lobby-atualizado', (data) => {
-      ['tanque1','tanque2','tanque3','tanque4'].forEach((t,i) => {
-        jogadores[t] = data[t];
-        const slot = document.getElementById('slot'+(i+1));
-        if (data[t]) {
-          document.getElementById('nome-slot'+(i+1)).textContent = data[t];
-          document.getElementById('status-slot'+(i+1)).textContent = '✅ Conectado!';
-          slot.classList.add('conectado');
-        } else {
-          document.getElementById('nome-slot'+(i+1)).textContent = 'Aguardando...';
-          document.getElementById('status-slot'+(i+1)).textContent = 'Vaga aberta';
-          slot.classList.remove('conectado');
-        }
-      });
-      const ativos = Object.values(data).filter(Boolean).length;
-      const btn = document.getElementById('btn-iniciar');
-      if (ativos >= 2) btn.classList.add('pronto');
-      else btn.classList.remove('pronto');
-    });
-
-    function iniciarBatalha() {
-      if (Object.values(jogadores).filter(Boolean).length < 2) return;
-      socket.emit('iniciar-jogo');
+    function criarExplosao(x,y){
+      tocarSomExplosao();const arena=document.getElementById('arena');
+      const el=document.createElement('div');el.classList.add('explosao');el.textContent='💥';
+      el.style.left=(x-24)+'px';el.style.top=(y-24)+'px';arena.appendChild(el);
+      setTimeout(()=>el.remove(),700);
     }
 
-    socket.on('jogo-iniciado', (data) => {
-      mapaAtual = data.mapa;
-      obstaculosAtuais = data.obstaculos;
-      powerUpsAtuais   = data.powerups || [];
-      prepararJogo();
-      iniciarContagem();
+    function renderizarPowerUps(){
+      document.querySelectorAll('.powerup').forEach(e=>e.remove());
+      const arena=document.getElementById('arena'),emojis={vida:'❤️',rapido:'⚡',escudo:'🛡️'};
+      powerUpsAtuais.forEach(pu=>{
+        if(!pu.ativo)return;const el=document.createElement('div');
+        el.classList.add('powerup',pu.tipo);el.dataset.id=pu.id;
+        el.style.left=pu.x+'px';el.style.top=pu.y+'px';el.textContent=emojis[pu.tipo];arena.appendChild(el);
+      });
+    }
+
+    function checarPowerUps(nome){
+      const pos=posicoes[nome],cx=pos.x+TAM/2,cy=pos.y+TAM/2;
+      powerUpsAtuais.forEach(pu=>{
+        if(!pu.ativo)return;const dx=cx-(pu.x+16),dy=cy-(pu.y+16);
+        if(Math.sqrt(dx*dx+dy*dy)<34){pu.ativo=false;socket.emit('powerup-coletado',{id:pu.id,tanque:nome,tipo:pu.tipo});aplicarPowerUp(nome,pu.tipo);document.querySelector(`.powerup[data-id="${pu.id}"]`)?.remove();}
+      });
+    }
+
+    function aplicarPowerUp(nome,tipo){
+      tocarSomPowerup();const i=nome.replace('tanque','');
+      if(tipo==='vida'){vidas[nome]=Math.min(VIDAS_MAX,vidas[nome]+2);atualizarVidas(nome);}
+      else if(tipo==='rapido'){velExtra[nome]=true;setTimeout(()=>{velExtra[nome]=false;},5000);}
+      else if(tipo==='escudo'){escudos[nome]=true;document.getElementById('escudo'+i).style.display='block';setTimeout(()=>{escudos[nome]=false;document.getElementById('escudo'+i).style.display='none';},5000);}
+    }
+
+    socket.on('powerup-coletado',(data)=>{
+      const pu=powerUpsAtuais.find(p=>p.id===data.id);if(pu)pu.ativo=false;
+      document.querySelector(`.powerup[data-id="${data.id}"]`)?.remove();aplicarPowerUp(data.tanque,data.tipo);
     });
 
-    function prepararJogo() {
-      ['tanque1','tanque2','tanque3','tanque4'].forEach((t,i) => {
-        if (jogadores[t]) {
-          document.getElementById('nome'+(i+1)).textContent = jogadores[t];
-          document.getElementById('info'+(i+1)).style.display = 'flex';
-          tanques[t].style.display = 'block';
-        } else {
-          document.getElementById('info'+(i+1)).style.display = 'none';
-          tanques[t].style.display = 'none';
-        }
+    socket.on('lobby-atualizado',(data)=>{
+      ['tanque1','tanque2','tanque3','tanque4'].forEach((t,i)=>{
+        jogadores[t]=data[t];const slot=document.getElementById('slot'+(i+1));
+        if(data[t]){document.getElementById('nome-slot'+(i+1)).textContent=data[t];document.getElementById('status-slot'+(i+1)).textContent='✅ Conectado!';slot.classList.add('conectado');}
+        else{document.getElementById('nome-slot'+(i+1)).textContent='Aguardando...';document.getElementById('status-slot'+(i+1)).textContent='Vaga aberta';slot.classList.remove('conectado');}
+      });
+      const ativos=Object.values(data).filter(Boolean).length;
+      const btn=document.getElementById('btn-iniciar');
+      if(ativos>=2)btn.classList.add('pronto');else btn.classList.remove('pronto');
+    });
+
+    function iniciarBatalha(){if(Object.values(jogadores).filter(Boolean).length<2)return;socket.emit('iniciar-jogo');}
+
+    socket.on('jogo-iniciado',(data)=>{mapaAtual=data.mapa;obstaculosAtuais=data.obstaculos;powerUpsAtuais=data.powerups||[];prepararJogo();iniciarContagem();});
+
+    function prepararJogo(){
+      ['tanque1','tanque2','tanque3','tanque4'].forEach((t,i)=>{
+        if(jogadores[t]){document.getElementById('nome'+(i+1)).textContent=jogadores[t];document.getElementById('info'+(i+1)).style.display='flex';tanques[t].style.display='block';}
+        else{document.getElementById('info'+(i+1)).style.display='none';tanques[t].style.display='none';}
       });
       desenharFundo(mapaAtual);
-      document.querySelectorAll('.obstaculo').forEach(o => o.remove());
-      obstaculosAtuais.forEach(ob => {
-        const el = document.createElement('div');
-        el.classList.add('obstaculo');
-        el.style.left = ob.x+'px'; el.style.top = ob.y+'px';
-        el.textContent = emojiObstaculo[mapaAtual] || '🪨';
-        document.getElementById('arena').appendChild(el);
-      });
+      if(obsCanvas)obsCanvas.remove();
+      obsCanvas=document.createElement('canvas');obsCanvas.width=ARENA_W;obsCanvas.height=ARENA_H;
+      obsCanvas.style.cssText='position:absolute;top:0;left:0;z-index:2;pointer-events:none;';
+      document.getElementById('arena').appendChild(obsCanvas);
+      const octx=obsCanvas.getContext('2d');
+      obstaculosAtuais.forEach(ob=>desenharObstaculo(octx,mapaAtual,ob.x,ob.y));
       renderizarPowerUps();
     }
 
-    function iniciarContagem() {
-      document.getElementById('tela-lobby').style.display = 'none';
-      const contagem = document.getElementById('contagem');
-      contagem.style.display = 'flex';
-      let num = 3;
-      contagem.textContent = num;
-      const intervalo = setInterval(() => {
-        num--;
-        if (num === 0) {
-          contagem.textContent = 'VAI! 🚀';
-        } else if (num < 0) {
-          clearInterval(intervalo);
-          contagem.style.display = 'none';
-          document.getElementById('jogo').style.display = 'flex';
-          jogoAtivo = true;
-          desenharTodosBonecos();
-          if (bonecoLoop) clearInterval(bonecoLoop);
-          bonecoLoop = setInterval(desenharTodosBonecos, 100);
-        } else {
-          contagem.textContent = num;
-        }
-      }, 1000);
+    function iniciarContagem(){
+      document.getElementById('tela-lobby').style.display='none';
+      const contagem=document.getElementById('contagem');contagem.style.display='flex';let num=3;contagem.textContent=num;
+      const iv=setInterval(()=>{num--;if(num===0){contagem.textContent='VAI! 🚀';}else if(num<0){clearInterval(iv);contagem.style.display='none';document.getElementById('jogo').style.display='flex';jogoAtivo=true;desenharTodosBonecos();if(bonecoLoop)clearInterval(bonecoLoop);bonecoLoop=setInterval(desenharTodosBonecos,100);}else{contagem.textContent=num;}},1000);
     }
 
-    function atualizarVidas(tanque) {
-      const i = tanque.replace('tanque','');
-      document.getElementById('barra'+i).style.width = (vidas[tanque]/VIDAS_MAX*100)+'%';
-      document.getElementById('vidas-num'+i).textContent = '❤️ '+vidas[tanque]+'/'+VIDAS_MAX;
+    function atualizarVidas(tanque){
+      const i=tanque.replace('tanque','');
+      document.getElementById('barra'+i).style.width=(vidas[tanque]/VIDAS_MAX*100)+'%';
+      document.getElementById('vidas-num'+i).textContent='❤️ '+vidas[tanque]+'/'+VIDAS_MAX;
     }
 
-    function colideObstaculo(nx, ny) {
-      return obstaculosAtuais.some(ob =>
-        nx < ob.x+48 && nx+TAM > ob.x &&
-        ny < ob.y+48 && ny+TAM > ob.y
-      );
-    }
+    function colideObstaculo(nx,ny){return obstaculosAtuais.some(ob=>nx<ob.x+48&&nx+TAM>ob.x&&ny<ob.y+48&&ny+TAM>ob.y);}
 
-    socket.on('comando', (data) => {
-      if (!jogoAtivo || eliminado[data.tanque]) return;
-      const tanque = tanques[data.tanque];
-      const pos    = posicoes[data.tanque];
-      if (!tanque) return;
-
-      if (data.dx !== undefined) {
-        const vel = velExtra[data.tanque] ? 7 : 4;
-        const steps = 4;
-        let nx = pos.x, ny = pos.y;
-        const sx = (data.dx * vel) / steps;
-        const sy = (data.dy * vel) / steps;
-        for (let i=0; i<steps; i++) {
-          const tx = Math.max(0, Math.min(ARENA_W-TAM, nx+sx));
-          const ty = Math.max(0, Math.min(ARENA_H-TAM, ny+sy));
-          if (!colideObstaculo(tx, ny)) nx = tx;
-          if (!colideObstaculo(nx, ty)) ny = ty;
+    socket.on('comando',(data)=>{
+      if(!jogoAtivo||eliminado[data.tanque])return;
+      const tanque=tanques[data.tanque],pos=posicoes[data.tanque];if(!tanque)return;
+      if(data.dx!==undefined){
+        const vel=velExtra[data.tanque]?7:4,steps=4;let nx=pos.x,ny=pos.y;
+        const sx=(data.dx*vel)/steps,sy=(data.dy*vel)/steps;
+        for(let i=0;i<steps;i++){
+          const tx=Math.max(0,Math.min(ARENA_W-TAM,nx+sx)),ty=Math.max(0,Math.min(ARENA_H-TAM,ny+sy));
+          if(!colideObstaculo(tx,ny)&&!colideJogador(data.tanque,tx,ny))nx=tx;
+          if(!colideObstaculo(nx,ty)&&!colideJogador(data.tanque,nx,ty))ny=ty;
         }
-        pos.x = nx; pos.y = ny;
-
-        if (Math.abs(data.dx) > 0.15 || Math.abs(data.dy) > 0.15) {
-          const angAlvo = Math.atan2(data.dy, data.dx) * 180 / Math.PI;
-          const rA = pos.dir * Math.PI/180;
-          const rB = angAlvo  * Math.PI/180;
-          const cn = Math.cos(rA)+(Math.cos(rB)-Math.cos(rA))*0.25;
-          const sn = Math.sin(rA)+(Math.sin(rB)-Math.sin(rA))*0.25;
-          pos.dir = Math.atan2(sn,cn)*180/Math.PI;
+        pos.x=nx;pos.y=ny;
+        if(Math.abs(data.dx)>0.15||Math.abs(data.dy)>0.15){
+          const angAlvo=Math.atan2(data.dy,data.dx)*180/Math.PI;
+          const rA=pos.dir*Math.PI/180,rB=angAlvo*Math.PI/180;
+          const cn=Math.cos(rA)+(Math.cos(rB)-Math.cos(rA))*0.25,sn=Math.sin(rA)+(Math.sin(rB)-Math.sin(rA))*0.25;
+          pos.dir=Math.atan2(sn,cn)*180/Math.PI;
         }
-
-        tanque.style.left      = pos.x+'px';
-        tanque.style.top       = pos.y+'px';
-        tanque.style.transform = `rotate(${pos.dir+90}deg)`;
-        desenharBoneco(data.tanque);
-        checarPowerUps(data.tanque);
+        tanque.style.left=pos.x+'px';tanque.style.top=pos.y+'px';tanque.style.transform=`rotate(${pos.dir+90}deg)`;
+        desenharBoneco(data.tanque);checarPowerUps(data.tanque);
       }
-
-      if (data.atirar) atirar(data.tanque);
+      if(data.atirar)atirar(data.tanque);
     });
 
-    function atirar(nomeTanque) {
-      if (cooldowns[nomeTanque]) return;
-      const tempoRecarga = velExtra[nomeTanque] ? 300 : 600;
-      cooldowns[nomeTanque] = true;
-      setTimeout(() => { cooldowns[nomeTanque] = false; }, tempoRecarga);
-
-      tocarSomTiro();
-
-      const pos = posicoes[nomeTanque];
-      const cor = cores[nomeTanque];
-      const rad = pos.dir * Math.PI / 180;
-      const canoDist = R + CANO;
-
-      let tx = pos.x + TAM/2 + Math.cos(rad) * canoDist;
-      let ty = pos.y + TAM/2 + Math.sin(rad) * canoDist;
-      const ddx = Math.cos(rad) * 14;
-      const ddy = Math.sin(rad) * 14;
-
-      const tiro = document.createElement('div');
-      tiro.classList.add('tiro');
-      tiro.style.backgroundColor = cor;
-      tiro.style.boxShadow = `0 0 8px ${cor}`;
-      tiro.style.left = (tx-4)+'px';
-      tiro.style.top  = (ty-4)+'px';
-      document.getElementById('arena').appendChild(tiro);
-
-      const intervalo = setInterval(() => {
-        tx += ddx; ty += ddy;
-        tiro.style.left = (tx-4)+'px';
-        tiro.style.top  = (ty-4)+'px';
-
-        if (obstaculosAtuais.some(ob =>
-          tx>ob.x && tx<ob.x+48 && ty>ob.y && ty<ob.y+48
-        )) { clearInterval(intervalo); tiro.remove(); return; }
-
-        for (const inimigo in tanques) {
-          if (inimigo===nomeTanque||eliminado[inimigo]||!jogadores[inimigo]) continue;
-          const pi = posicoes[inimigo];
-          const dx2 = tx-(pi.x+TAM/2);
-          const dy2 = ty-(pi.y+TAM/2);
-          if (Math.sqrt(dx2*dx2+dy2*dy2) < R+4) {
-            clearInterval(intervalo); tiro.remove();
-
-            if (escudos[inimigo]) {
-              // Escudo absorve o tiro
-              tocarSomHit();
-              tanques[inimigo].style.opacity='0.5';
-              setTimeout(()=>{ if(!eliminado[inimigo]) tanques[inimigo].style.opacity='1'; },200);
-              return;
-            }
-
-            tocarSomHit();
-            vidas[inimigo]--;
-            atualizarVidas(inimigo);
-            tanques[inimigo].style.opacity='0.2';
-            setTimeout(()=>{ if(!eliminado[inimigo]) tanques[inimigo].style.opacity='1'; },400);
-
-            if (vidas[inimigo]<=0) {
-              eliminado[inimigo]=true;
-              tanques[inimigo].classList.add('eliminado');
-              criarExplosao(pi.x+TAM/2, pi.y+TAM/2);
-              const iNum = inimigo.replace('tanque','');
-              document.getElementById('info'+iNum).classList.add('eliminado-placar');
-              socket.emit('jogador-eliminado', inimigo);
-              verificarVencedor();
+    function atirar(nomeTanque){
+      if(cooldowns[nomeTanque])return;const tr=velExtra[nomeTanque]?300:600;
+      cooldowns[nomeTanque]=true;setTimeout(()=>{cooldowns[nomeTanque]=false;},tr);tocarSomTiro();
+      const pos=posicoes[nomeTanque],cor=cores[nomeTanque],rad=pos.dir*Math.PI/180;
+      let tx=pos.x+TAM/2+Math.cos(rad)*(R+CANO),ty=pos.y+TAM/2+Math.sin(rad)*(R+CANO);
+      const ddx=Math.cos(rad)*13,ddy=Math.sin(rad)*13;
+      const tiro=document.createElement('div');tiro.classList.add('tiro');
+      tiro.style.backgroundColor=cor;tiro.style.boxShadow=`0 0 8px ${cor}`;
+      tiro.style.left=(tx-4)+'px';tiro.style.top=(ty-4)+'px';document.getElementById('arena').appendChild(tiro);
+      const iv=setInterval(()=>{
+        tx+=ddx;ty+=ddy;tiro.style.left=(tx-4)+'px';tiro.style.top=(ty-4)+'px';
+        if(obstaculosAtuais.some(ob=>tx>ob.x&&tx<ob.x+48&&ty>ob.y&&ty<ob.y+48)){clearInterval(iv);tiro.remove();return;}
+        for(const inimigo in tanques){
+          if(inimigo===nomeTanque||eliminado[inimigo]||!jogadores[inimigo])continue;
+          const pi=posicoes[inimigo],dx2=tx-(pi.x+TAM/2),dy2=ty-(pi.y+TAM/2);
+          if(Math.sqrt(dx2*dx2+dy2*dy2)<R+4){
+            clearInterval(iv);tiro.remove();
+            if(escudos[inimigo]){tocarSomHit();tanques[inimigo].style.opacity='0.5';setTimeout(()=>{if(!eliminado[inimigo])tanques[inimigo].style.opacity='1';},200);return;}
+            tocarSomHit();vidas[inimigo]--;atualizarVidas(inimigo);
+            tanques[inimigo].style.opacity='0.2';setTimeout(()=>{if(!eliminado[inimigo])tanques[inimigo].style.opacity='1';},400);
+            if(vidas[inimigo]<=0){
+              eliminado[inimigo]=true;tanques[inimigo].classList.add('eliminado');
+              criarExplosao(pi.x+TAM/2,pi.y+TAM/2);
+              document.getElementById('info'+inimigo.replace('tanque','')).classList.add('eliminado-placar');
+              socket.emit('jogador-eliminado',inimigo);verificarVencedor();
             }
             return;
           }
         }
-        if (tx<0||tx>ARENA_W||ty<0||ty>ARENA_H){ clearInterval(intervalo); tiro.remove(); }
-      }, 16);
+        if(tx<0||tx>ARENA_W||ty<0||ty>ARENA_H){clearInterval(iv);tiro.remove();}
+      },16);
     }
 
-    function verificarVencedor() {
-      const vivos = Object.keys(eliminado).filter(t=>!eliminado[t]&&jogadores[t]);
-      if (vivos.length===1) {
-        jogoAtivo=false;
-        if(bonecoLoop){ clearInterval(bonecoLoop); bonecoLoop=null; }
-        const v=vivos[0];
-        document.getElementById('nome-vencedor').textContent = jogadores[v];
+    function verificarVencedor(){
+      const vivos=Object.keys(eliminado).filter(t=>!eliminado[t]&&jogadores[t]);
+      if(vivos.length===1){
+        jogoAtivo=false;if(bonecoLoop){clearInterval(bonecoLoop);bonecoLoop=null;}
+        document.getElementById('nome-vencedor').textContent=jogadores[vivos[0]];
         document.getElementById('nome-mapa').textContent='Mapa: '+nomesMapa[mapaAtual];
-        setTimeout(()=>{ document.getElementById('tela-final').style.display='flex'; },1000);
+        setTimeout(()=>{document.getElementById('tela-final').style.display='flex';},1000);
       }
     }
 
-    function resetarJogo() {
-      jogoAtivo=false;
-      if(bonecoLoop){ clearInterval(bonecoLoop); bonecoLoop=null; }
-      for(const t in vidas)     vidas[t]=VIDAS_MAX;
-      for(const t in eliminado) eliminado[t]=false;
-      for(const t in cooldowns) cooldowns[t]=false;
-      for(const t in escudos)   escudos[t]=false;
-      for(const t in velExtra)  velExtra[t]=false;
-      for(let i=1;i<=4;i++){
-        document.getElementById('escudo'+i).style.display='none';
-        document.getElementById('info'+i).classList.remove('eliminado-placar');
-      }
-      for(const t in posicoes){
-        posicoes[t].x=posicoesIniciais[t].x;
-        posicoes[t].y=posicoesIniciais[t].y;
-        posicoes[t].dir=posicoesIniciais[t].dir;
-        tanques[t].classList.remove('eliminado');
-        tanques[t].style.opacity='1';
-        tanques[t].style.transform='';
-        tanques[t].style.left=posicoes[t].x+'px';
-        tanques[t].style.top=posicoes[t].y+'px';
-      }
-      for(let i=1;i<=4;i++){
-        document.getElementById('barra'+i).style.width='100%';
-        document.getElementById('vidas-num'+i).textContent='❤️ 8/8';
-      }
-      document.getElementById('tela-final').style.display='none';
-      document.getElementById('jogo').style.display='none';
-      document.querySelectorAll('.powerup').forEach(e=>e.remove());
-      document.querySelectorAll('.explosao').forEach(e=>e.remove());
+    function resetarJogo(){
+      jogoAtivo=false;if(bonecoLoop){clearInterval(bonecoLoop);bonecoLoop=null;}
+      for(const t in vidas)vidas[t]=VIDAS_MAX;for(const t in eliminado)eliminado[t]=false;
+      for(const t in cooldowns)cooldowns[t]=false;for(const t in escudos)escudos[t]=false;for(const t in velExtra)velExtra[t]=false;
+      for(let i=1;i<=4;i++){document.getElementById('escudo'+i).style.display='none';document.getElementById('info'+i).classList.remove('eliminado-placar');document.getElementById('barra'+i).style.width='100%';document.getElementById('vidas-num'+i).textContent='❤️ 5/5';}
+      for(const t in posicoes){posicoes[t].x=posicoesIniciais[t].x;posicoes[t].y=posicoesIniciais[t].y;posicoes[t].dir=posicoesIniciais[t].dir;tanques[t].classList.remove('eliminado');tanques[t].style.opacity='1';tanques[t].style.transform='';tanques[t].style.left=posicoes[t].x+'px';tanques[t].style.top=posicoes[t].y+'px';}
+      document.getElementById('tela-final').style.display='none';document.getElementById('jogo').style.display='none';
+      document.querySelectorAll('.powerup').forEach(e=>e.remove());document.querySelectorAll('.explosao').forEach(e=>e.remove());
+      if(obsCanvas){obsCanvas.remove();obsCanvas=null;}
     }
 
-    function revanche()    { socket.emit('revanche'); }
-    function novaPartida() { socket.emit('nova-partida'); }
-
-    socket.on('revanche',(data)=>{
-      mapaAtual=data.mapa; obstaculosAtuais=data.obstaculos; powerUpsAtuais=data.powerups||[];
-      resetarJogo(); prepararJogo(); iniciarContagem();
-    });
-    socket.on('nova-partida',()=>{ location.reload(); });
+    function revanche(){socket.emit('revanche');}
+    function novaPartida(){socket.emit('nova-partida');}
+    socket.on('revanche',(data)=>{mapaAtual=data.mapa;obstaculosAtuais=data.obstaculos;powerUpsAtuais=data.powerups||[];resetarJogo();prepararJogo();iniciarContagem();});
+    socket.on('nova-partida',()=>{location.reload();});
   </script>
 </body>
 </html>
+HTMLEOF
+echo "index ok $(wc -l < /home/claude/index.html) linhas"

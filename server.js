@@ -5,85 +5,54 @@ const io = require('socket.io')(http);
 
 app.use(express.static(__dirname));
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
+app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/controle', (req, res) => res.sendFile(__dirname + '/controle.html'));
 
-app.get('/controle', (req, res) => {
-  res.sendFile(__dirname + '/controle.html');
-});
+const lobby = { tanque1: null, tanque2: null, tanque3: null, tanque4: null };
 
-const lobby = {
-  tanque1: null,
-  tanque2: null,
-  tanque3: null,
-  tanque4: null
-};
-
-const mapas = ['deserto', 'floresta', 'espacial', 'cidade', 'vulcao'];
+// Sem cidade, com xeriftech
+const mapas = ['deserto', 'floresta', 'espacial', 'vulcao', 'xeriftech'];
 
 function gerarObstaculos(mapa) {
   const obstaculos = [];
-  const quantidade = 12 + Math.floor(Math.random() * 6); // 12 a 17 obstáculos
+  const quantidade = 10 + Math.floor(Math.random() * 5);
 
-  const tiposObstaculo = {
-    deserto:  ['🪨', '🌵', '🪨'],
-    floresta: ['🌲', '🌳', '🪨'],
-    espacial: ['🪐', '☄️', '🛸'],
-    cidade:   ['🏢', '🚧', '🪣'],
-    vulcao:   ['🪨', '🔥', '🌋']
-  };
-
-  const tipos = tiposObstaculo[mapa];
-
-  // Posições proibidas (onde os tanques começam) — arena 1400x700
+  // Posições proibidas — arena 800x650
   const proibidas = [
-    { x: 60,   y: 300 },
-    { x: 1292, y: 300 },
-    { x: 60,   y: 500 },
-    { x: 1292, y: 500 }
+    { x: 30,  y: 30  },
+    { x: 722, y: 30  },
+    { x: 30,  y: 572 },
+    { x: 722, y: 572 }
   ];
 
   let tentativas = 0;
   while (obstaculos.length < quantidade && tentativas < 300) {
     tentativas++;
-    const x = 80 + Math.floor(Math.random() * 1200);
-    const y = 80 + Math.floor(Math.random() * 540);
+    const x = 60 + Math.floor(Math.random() * 680);
+    const y = 60 + Math.floor(Math.random() * 530);
 
     const colideTanque = proibidas.some(p =>
-      Math.abs(p.x - x) < 120 && Math.abs(p.y - y) < 120
+      Math.abs(p.x - x) < 100 && Math.abs(p.y - y) < 100
     );
-
     const colideObstaculo = obstaculos.some(o =>
-      Math.abs(o.x - x) < 80 && Math.abs(o.y - y) < 80
+      Math.abs(o.x - x) < 70 && Math.abs(o.y - y) < 70
     );
 
     if (!colideTanque && !colideObstaculo) {
-      obstaculos.push({
-        x, y,
-        w: 48, h: 48,
-        tipo: tipos[Math.floor(Math.random() * tipos.length)]
-      });
+      obstaculos.push({ x, y, w: 48, h: 48 });
     }
   }
-
   return obstaculos;
 }
 
-// Power-ups
 function gerarPowerUps() {
   const tipos = ['vida', 'rapido', 'escudo'];
-  const powerups = [];
-  for (let i = 0; i < 3; i++) {
-    powerups.push({
-      id: i,
-      tipo: tipos[i],
-      x: 300 + Math.floor(Math.random() * 800),
-      y: 150 + Math.floor(Math.random() * 400),
-      ativo: true
-    });
-  }
-  return powerups;
+  return tipos.map((tipo, i) => ({
+    id: i, tipo,
+    x: 150 + Math.floor(Math.random() * 500),
+    y: 100 + Math.floor(Math.random() * 450),
+    ativo: true
+  }));
 }
 
 let mapaAtual = null;
@@ -96,20 +65,13 @@ io.on('connection', (socket) => {
 
   socket.on('jogador-entrou', (data) => {
     const { apelido, tanque } = data;
-
     if (lobby[tanque] && lobby[tanque] !== apelido) {
-      socket.emit('vaga-ocupada', tanque);
-      return;
+      socket.emit('vaga-ocupada', tanque); return;
     }
-
-    for (const t in lobby) {
-      if (lobby[t] === apelido) lobby[t] = null;
-    }
-
+    for (const t in lobby) if (lobby[t] === apelido) lobby[t] = null;
     lobby[tanque] = apelido;
     socket.tanque = tanque;
     socket.apelido = apelido;
-
     console.log(`${apelido} entrou como ${tanque}`);
     io.emit('lobby-atualizado', lobby);
   });
@@ -118,7 +80,6 @@ io.on('connection', (socket) => {
     mapaAtual = mapas[Math.floor(Math.random() * mapas.length)];
     obstaculosAtuais = gerarObstaculos(mapaAtual);
     powerUpsAtuais = gerarPowerUps();
-
     console.log(`Jogo iniciado! Mapa: ${mapaAtual}`);
     io.emit('jogo-iniciado', { mapa: mapaAtual, obstaculos: obstaculosAtuais, powerups: powerUpsAtuais });
   });
@@ -131,24 +92,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('nova-partida', () => {
-    lobby.tanque1 = null;
-    lobby.tanque2 = null;
-    lobby.tanque3 = null;
-    lobby.tanque4 = null;
+    lobby.tanque1 = null; lobby.tanque2 = null;
+    lobby.tanque3 = null; lobby.tanque4 = null;
     io.emit('nova-partida');
   });
 
-  socket.on('powerup-coletado', (data) => {
-    io.emit('powerup-coletado', data);
-  });
-
-  socket.on('jogador-eliminado', (tanque) => {
-    io.emit('jogador-eliminado', tanque);
-  });
-
-  socket.on('comando', (data) => {
-    io.emit('comando', data);
-  });
+  socket.on('powerup-coletado', (data) => io.emit('powerup-coletado', data));
+  socket.on('jogador-eliminado', (tanque) => io.emit('jogador-eliminado', tanque));
+  socket.on('comando', (data) => io.emit('comando', data));
 
   socket.on('disconnect', () => {
     if (socket.tanque) {
@@ -160,6 +111,4 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-http.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+http.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
