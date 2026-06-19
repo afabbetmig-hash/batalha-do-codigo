@@ -319,9 +319,15 @@
       if(cooldowns[nomeTanque])return;const tr=velExtra[nomeTanque]?300:600;
       cooldowns[nomeTanque]=true;setTimeout(()=>{cooldowns[nomeTanque]=false;},tr);tocarSomTiro();
       const pos=posicoes[nomeTanque],cor=cores[nomeTanque];
-      const rad=(pos.dir-90)*Math.PI/180;
-      let tx=pos.x+TAM/2+Math.cos(rad)*(R+CANO),ty=pos.y+TAM/2+Math.sin(rad)*(R+CANO);
-      const ddx=Math.cos(rad)*13,ddy=Math.sin(rad)*13;
+      // O cano é desenhado apontando para cima no canvas.
+      // O CSS aplica rotate(pos.dir + 90deg), então:
+      // - pos.dir=0 => visualmente o cano aponta para CIMA na tela
+      // atan2(dy,dx): dir=0 = direita, dir=90 = baixo
+      // CSS rotate(dir+90): dir=0 => cano aponta direita ✓
+      // Tiro usa cos(dir) no X e sin(dir) no Y (sistema padrão)
+      const dirRad=pos.dir*Math.PI/180;
+      let tx=pos.x+TAM/2+Math.cos(dirRad)*(R+CANO),ty=pos.y+TAM/2+Math.sin(dirRad)*(R+CANO);
+      const ddx=Math.cos(dirRad)*13,ddy=Math.sin(dirRad)*13;
       const tiro=document.createElement('div');tiro.classList.add('tiro');
       tiro.style.backgroundColor=cor;tiro.style.boxShadow=`0 0 8px ${cor}`;
       tiro.style.left=(tx-4)+'px';tiro.style.top=(ty-4)+'px';document.getElementById('arena').appendChild(tiro);
