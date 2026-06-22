@@ -304,12 +304,12 @@
         }
         pos.x=nx;pos.y=ny;
         if(Math.abs(data.dx)>0.15||Math.abs(data.dy)>0.15){
-          const angAlvo=Math.atan2(data.dy,data.dx)*180/Math.PI;
+          const angAlvo=Math.atan2(data.dx,-data.dy)*180/Math.PI;
           const rA=pos.dir*Math.PI/180,rB=angAlvo*Math.PI/180;
           const cn=Math.cos(rA)+(Math.cos(rB)-Math.cos(rA))*0.25,sn=Math.sin(rA)+(Math.sin(rB)-Math.sin(rA))*0.25;
           pos.dir=Math.atan2(sn,cn)*180/Math.PI;
         }
-        tanque.style.left=pos.x+'px';tanque.style.top=pos.y+'px';tanque.style.transform=`rotate(${pos.dir+90}deg)`;
+        tanque.style.left=pos.x+'px';tanque.style.top=pos.y+'px';tanque.style.transform=`rotate(${pos.dir}deg)`;
         desenharBoneco(data.tanque);checarPowerUps(data.tanque);
       }
       if(data.atirar)atirar(data.tanque);
@@ -326,8 +326,8 @@
       // CSS rotate(dir+90): dir=0 => cano aponta direita ✓
       // Tiro usa cos(dir) no X e sin(dir) no Y (sistema padrão)
       const dirRad=pos.dir*Math.PI/180;
-      let tx=pos.x+TAM/2+Math.cos(dirRad)*(R+CANO),ty=pos.y+TAM/2+Math.sin(dirRad)*(R+CANO);
-      const ddx=Math.cos(dirRad)*13,ddy=Math.sin(dirRad)*13;
+      let tx=pos.x+TAM/2+Math.sin(dirRad)*(R+CANO),ty=pos.y+TAM/2-Math.cos(dirRad)*(R+CANO);
+      const ddx=Math.sin(dirRad)*13,ddy=-Math.cos(dirRad)*13;
       const tiro=document.createElement('div');tiro.classList.add('tiro');
       tiro.style.backgroundColor=cor;tiro.style.boxShadow=`0 0 8px ${cor}`;
       tiro.style.left=(tx-4)+'px';tiro.style.top=(ty-4)+'px';document.getElementById('arena').appendChild(tiro);
@@ -357,9 +357,10 @@
 
     function verificarVencedor(){
       const vivos=Object.keys(eliminado).filter(t=>!eliminado[t]&&jogadores[t]);
-      if(vivos.length===1){
+      if(vivos.length<=1){
         jogoAtivo=false;if(bonecoLoop){clearInterval(bonecoLoop);bonecoLoop=null;}
-        document.getElementById('nome-vencedor').textContent=jogadores[vivos[0]];
+        const vencedor=vivos.length===1?jogadores[vivos[0]]:'Empate!';
+        document.getElementById('nome-vencedor').textContent=vencedor;
         document.getElementById('nome-mapa').textContent='Mapa: '+nomesMapa[mapaAtual];
         setTimeout(()=>{document.getElementById('tela-final').style.display='flex';},1000);
       }
